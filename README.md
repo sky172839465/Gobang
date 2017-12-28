@@ -1,0 +1,2 @@
+# Gobang
+Gobang small game
