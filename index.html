@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/main.css">
-    <title>Document</title>
+    <title>Gobang</title>
 </head>
-<body>
-    <nav>
-        Hello Gobang
+<body class="gobang">
+    <nav class="header header--primary">
+        <div class="header__title">
+            <h1>Gobang 五子棋</h1>
+        </div>
+        <div class="header__btn pointer" onclick="test()">
+            Start
+        </div>
     </nav>
-    <button onclick="test()">btn</button>
+
+    <div class="chessboard"></div>
+
     <script src="./js/index.js"></script>
 </body>
 </html>

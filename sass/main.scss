@@ -1,4 +1,127 @@
-* {
-    padding: 0;
+*,
+*::before,
+*::after {
     margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+html {
+    // 15px
+    font-size: 62.5%;
+}
+
+$color-primary: #008b8b;
+$color-secondary: #5c2be2;
+$color-white: #fff;
+$color-black: #000;
+
+// chess style
+$color-chessboard: #814b15;
+$chess-size: 60px;
+$chessboard-height: 1000px;
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: $color-primary;
+    height: 5.5rem;
+    padding: 1rem;
+    color: $color-white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    &__title {
+        flex: auto;
+        font-size: 1.5rem;
+    }
+
+    &__btn {
+        width: auto;
+        padding: 2rem;
+        font-size: 2rem;
+        background-color: $color-secondary;
+        border-radius: 0.5rem;
+    }
+
+    &__btn:hover {
+        background-color: darken($color: $color-secondary, $amount: 10%);
+    }
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.chessboard {
+    margin: 0.4rem;
+    width: calc(100% - 2rem);
+    height: $chessboard-height;
+
+    &__row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        height: $chess-size;
+        // background-color: $color-chessboard;        
+    }
+
+    &__column {
+        
+        width: $chess-size;
+        height: $chess-size;
+        
+        &:hover:not(.selected) {
+            outline: $color-primary solid 1.5px;
+            z-index: 1;
+        }
+    }
+
+    &__grid {
+        display: flex;
+        flex-direction: row;
+        background-color: $color-chessboard;
+        height: calc(#{$chess-size} / 2);
+
+        .chessboard__block {
+            width: calc(#{$chess-size} / 2);
+            height: calc(#{$chess-size} / 2);
+        }
+
+        .chessboard__block--top-left {
+            border-bottom: $color-black solid 1px;
+        }
+
+        .chessboard__block--top-right {
+            border-left: $color-black solid 1px;
+        }
+        
+        .chessboard__block--bottom-left {
+            border-right: $color-black solid 1px;
+        }
+        
+        .chessboard__block--bottom-right {
+            border-top: $color-black solid 1px;
+        }
+    }    
+}
+
+.chess {
+    width: calc(#{$chess-size} / 2);
+    height: calc(#{$chess-size} / 2);
+    position: relative;
+    top: calc(#{$chess-size} / 4 * 3 * -1);
+    left: calc(#{$chess-size} / 4 * 1);
+    border-radius: 50%;
+
+    &.chess--white {
+        background-color:$color-white;
+    }
+
+    &.chess--black {
+        background-color:$color-black;
+    }    
 }
