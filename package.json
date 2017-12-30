@@ -1,0 +1,22 @@
+{
+  "name": "gobang",
+  "version": "1.0.0",
+  "description": "Gobang small game",
+  "main": "index.js",
+  "scripts": {
+    "compile:sass": "node-sass sass/main.scss css/main.css -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sky172839465/Gobang.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sky172839465/Gobang/issues"
+  },
+  "homepage": "https://github.com/sky172839465/Gobang#readme",
+  "devDependencies": {
+    "node-sass": "^4.7.2"
+  }
+}
