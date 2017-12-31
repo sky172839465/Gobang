@@ -152,7 +152,7 @@ $chessboard-width: 1200px;
         height: $chess-size;
         margin: 0 auto;
         border-radius: 50%;
-        animation: notice 2s infinite;
+        animation: notice 1.5s infinite;
         z-index: 0;
     }
 }
@@ -167,9 +167,9 @@ $chessboard-width: 1200px;
     }   
     
     70% {
-        width: $chess-size * 1;
-        height: $chess-size * 1;
-        transform: translateY(0);
+        width: $chess-size;
+        height: $chess-size;
+        transform: translate(0);
         background-color: rgba($color-primary, 0);
     }
 
