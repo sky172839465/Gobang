@@ -18,7 +18,7 @@ function init() {
         blackSide: { key: 'black', chesses: [] }
     };
     attackSide = 'whiteSide';
-    isCanvasSupport = !checkIsCanvasSupprot();
+    isCanvasSupport = checkIsCanvasSupprot();
     chessSize = 60;
     console.log(isCanvasSupport);    
 }

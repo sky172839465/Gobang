@@ -169,7 +169,7 @@ $chessboard-width: 1200px;
     70% {
         width: $chess-size;
         height: $chess-size;
-        transform: translate(0);
+        transform: translateY(-0.3rem);
         background-color: rgba($color-primary, 0);
     }
 
