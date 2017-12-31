@@ -13,6 +13,7 @@ html {
 
 $color-primary: #008b8b;
 $color-secondary: #5c2be2;
+$color-tertiary: #0000ff;
 $color-white: #fff;
 $color-black: #000;
 
@@ -163,20 +164,20 @@ $chessboard-width: 1200px;
         width: $chess-size / 2;
         height: $chess-size / 2;
         transform: translateY($chess-size / 4);
-        background-color: rgba($color-primary, 0.9);
+        background-color: rgba($color-tertiary, 0.9);
     }   
     
     70% {
         width: $chess-size;
         height: $chess-size;
         transform: translateY(-0.3rem);
-        background-color: rgba($color-primary, 0);
+        background-color: rgba($color-tertiary, 0);
     }
 
     100% {
         width: $chess-size / 2;
         height: $chess-size / 2;
         transform: translateY($chess-size / 4);
-        background-color: rgba($color-primary, 0);
+        background-color: rgba($color-tertiary, 0);
     }
 }
