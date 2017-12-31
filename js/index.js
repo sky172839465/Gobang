@@ -2,6 +2,7 @@
 var player, 
     attactSide, 
     lastChess, 
+    lastChessOverlay,
     isCanvasSupport, 
     chessSize;
 
@@ -17,9 +18,14 @@ function init() {
         blackSide: { key: 'black', chesses: [] }
     };
     attackSide = 'whiteSide';
-    isCanvasSupport = checkIsCanvasSupprot();
+    isCanvasSupport = !checkIsCanvasSupprot();
     chessSize = 60;
     console.log(isCanvasSupport);    
+}
+
+function test() {
+    console.log(player);
+    console.log(lastChessOverlay);
 }
 
 /**
@@ -52,6 +58,8 @@ function init() {
             chessColumn = document.createElement('div');
             chessColumn.classList.add('chessboard__column');
             chessColumn.classList.add('pointer');
+            chessColumn.dataset.Y = i;
+            chessColumn.dataset.X = j;            
             // 下棋事件
             chessColumn.onclick = function(event) { chess(event) };
 
@@ -119,6 +127,17 @@ function init() {
 })();
 
 /**
+ * 建立下最後一手的棋格背景
+ * 
+ */
+(function newOverlay() {
+    var overlay;
+    overlay = document.createElement('div');
+    overlay.classList.add('chess--overlay');
+    lastChessOverlay = overlay;
+})();
+
+/**
  * 把新棋子放到棋盤上
  * 
  * @param {any} event 下棋事件
@@ -127,6 +146,7 @@ function chess(event) {
     var target, player, chess;
     target = event.target;
     player = getPlayer();
+    // 判斷點到的是不是十字棋格，不是的話就找到最近的棋格
     if (!checkClassExist(target.classList, 'chessboard__column')) {
         target = target.closest('.chessboard__column');
     }
@@ -136,11 +156,19 @@ function chess(event) {
             chess = createCanvasChess(player);
         } else {
             chess = createDivChess(player);
-        }        
+        }
+        // 把棋子放到十字上
         target.appendChild(chess);
         target.classList.add('selected');
+        target.appendChild(lastChessOverlay);
+
+        // 攻擊角色交換
         changeAttackPlayer();
-        lastChess = chess;
+        player.chesses.push({ x: target.dataset.X, y: target.dataset.Y });
+        if (lastChess) {
+            lastChess.classList.remove('chess--last');
+        }
+        lastChess = target;
     }
 }
 

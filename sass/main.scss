@@ -130,6 +130,7 @@ $chessboard-width: 1200px;
     left: calc(#{$chess-size} / 4 * 1);
     border-radius: 50%;
     box-shadow: 0 6px 20px 0px rgba($color-black, 0.4);
+    z-index: 1;
 
     &__div {
         width: calc(#{$chess-size} / 2);
@@ -141,6 +142,41 @@ $chessboard-width: 1200px;
     
         &--black {
             background-color:$color-black;
-        }        
+        }
+    }
+
+    &--overlay {
+        position: relative;
+        bottom: $chess-size * 1.5;
+        width: $chess-size;
+        height: $chess-size;
+        margin: 0 auto;
+        border-radius: 50%;
+        animation: notice 2s infinite;
+        z-index: 0;
+    }
+}
+
+// https://codepen.io/olam/pen/zcqea?editors=1100
+@keyframes notice {
+    0% {
+        width: $chess-size / 2;
+        height: $chess-size / 2;
+        transform: translateY($chess-size / 4);
+        background-color: rgba($color-primary, 0.9);
+    }   
+    
+    70% {
+        width: $chess-size * 1;
+        height: $chess-size * 1;
+        transform: translateY(0);
+        background-color: rgba($color-primary, 0);
+    }
+
+    100% {
+        width: $chess-size / 2;
+        height: $chess-size / 2;
+        transform: translateY($chess-size / 4);
+        background-color: rgba($color-primary, 0);
     }
 }
