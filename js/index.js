@@ -1,6 +1,6 @@
 
 var player, 
-    attactSide, 
+    attackSide, 
     lastChess, 
     lastChessOverlay,
     isCanvasSupport, 
@@ -20,12 +20,12 @@ function init() {
     attackSide = 'whiteSide';
     isCanvasSupport = checkIsCanvasSupprot();
     chessSize = 60;
-    console.log(isCanvasSupport);    
+    // console.log(isCanvasSupport);
 }
 
 function test() {
     console.log(player);
-    console.log(lastChessOverlay);
+    // isCheckmate();
 }
 
 /**
@@ -146,29 +146,37 @@ function chess(event) {
     var target, player, chess;
     target = event.target;
     player = getPlayer();
+
     // 判斷點到的是不是十字棋格，不是的話就找到最近的棋格
-    if (!checkClassExist(target.classList, 'chessboard__column')) {
+    if (!isClassExist(target.classList, 'chessboard__column')) {
         target = target.closest('.chessboard__column');
     }
     // 判斷棋格有沒有被選走
-    if (!checkClassExist(target.classList, 'selected')) {
+    if (!isClassExist(target.classList, 'selected')) {
         if (isCanvasSupport) {
             chess = createCanvasChess(player);
         } else {
             chess = createDivChess(player);
         }
+
         // 把棋子放到十字上
         target.appendChild(chess);
         target.classList.add('selected');
         target.appendChild(lastChessOverlay);
+        lastChess = target;
+        player.chesses.push(target);
 
-        // 攻擊角色交換
-        changeAttackPlayer();
-        player.chesses.push({ x: target.dataset.X, y: target.dataset.Y });
+        // 第一棋沒有最後一手
         if (lastChess) {
             lastChess.classList.remove('chess--last');
+
+            // 判斷這一棋是不是將死
+            if (isCheckmate()) {
+            
+            }      
         }
-        lastChess = target;
+        changeAttackPlayer();
+        // changeAttackPlayer();
     }
 }
 
@@ -247,16 +255,159 @@ function checkIsCanvasSupprot() {
  * @param {any} className class
  * @returns {boolean} 
  */
-function checkClassExist(list, className) {
-    var isClassExist, 
+function isClassExist(list, className) {
+    var classExist, 
         i;
 
-    isClassExist = false;
+    classExist = false;
     for (i = 0; i < list.length; i++) {
         if (list[i] === className) {
-            isClassExist = true;
+            classExist = true;
             break;
         }
     }
-    return isClassExist;
+    return classExist;
+}
+
+/**
+ * 判斷是不是將死了
+ * 
+ */
+function isCheckmate() {
+    var checkmat, 
+        rangeChessList, 
+        groupChessList, 
+        group,
+        sortChessList;
+    checkmat = false;
+    rangeChessList = getRangeChesses();
+    if (rangeChessList.length >= 5) {
+        groupChessList = getGroupChesses(rangeChessList);
+        for (group in groupChessList) {
+            if (groupChessList[group].length >= 5) {
+                sortChessList = getSortChesses(group, groupChessList[group]);
+                groupChessList[group] = sortChessList;
+            }
+        }
+        console.log(groupChessList);
+    }
+    return checkmat;
+}
+
+/**
+ * 把XY軸差距小於5的棋子拿進來，只有這些有機會將死
+ * 
+ * @returns 
+ */
+function getRangeChesses() {
+    var targetPosition, 
+        chessList, 
+        rangeChessList;
+    targetPosition = gettargetPosition();
+    chessList = player[attackSide].chesses;
+    rangeChessList = chessList.filter(function(chess) {
+        var item = chess.dataset;
+        if (Math.abs((+item.X) - targetPosition.X) <= 4 &&
+            Math.abs((+item.Y) - targetPosition.Y) <= 4) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    return rangeChessList;
+}
+
+/**
+ * 把棋子分成 (左上+右下), (左下+右上), (正上+正下), (正左+正右)
+ * 
+ * @param {any} chessList 
+ * @returns 
+ */
+function getGroupChesses(chessList) {
+    var targetPosition, 
+        groupChessList,
+        group;
+    targetPosition = gettargetPosition();
+    groupChessList = {
+        'leftTopToRightBottom': [],
+        'leftBottomToRightTop': [],
+        'vertical': [],
+        'horizontal': []
+    };
+
+    chessList.forEach(function(chess) {
+        var item = chess.dataset;
+        if ((+item.X < targetPosition.X && +item.Y > targetPosition.Y) ||
+            (+item.X > targetPosition.X && +item.Y < targetPosition.Y)) {
+            groupChessList['leftTopToRightBottom'].push(chess);
+
+        } else if ((+item.X > targetPosition.X && +item.Y > targetPosition.Y) ||
+            (+item.X < targetPosition.X && +item.Y < targetPosition.Y)) {
+            groupChessList['leftBottomToRightTop'].push(chess);
+
+        }else if (+item.X === targetPosition.X && +item.Y !== targetPosition.Y) {
+            groupChessList['vertical'].push(chess);
+
+        } else if (+item.X !== targetPosition.X && +item.Y === targetPosition.Y) {
+            groupChessList['horizontal'].push(chess);
+
+        } else {
+            for(group in groupChessList) {
+                groupChessList[group].push(chess);
+            }
+        }
+    });
+
+    return groupChessList;
+}
+
+/**
+ * 取得最後一手棋的位置
+ * 
+ * @returns 
+ */
+function gettargetPosition() {
+    var targetPosition;
+    targetPosition = { 
+        X: +lastChess.dataset.X, 
+        Y: +lastChess.dataset.Y 
+    };
+    return targetPosition;
+}
+
+/**
+ * 由小到大重新排列棋子
+ * 
+ * @param {any} group 
+ * @param {any} chessList 
+ * @returns 
+ */
+function getSortChesses(group, chessList) {
+    console.log(group);
+    var sortChessList;
+    switch(group) {
+        case 'leftTopToRightBottom':
+        case 'horizontal':
+            sortChessList = chessList.sort(function(a, b) {
+                if (+a.dataset.X > +b.dataset.X) {
+                    return 1;
+                } else if (+a.dataset.X < +b.dataset.X) {
+                    return -1;
+                } 
+                return 0;
+            });
+            break;
+        case 'leftBottomToRightTop':
+        case 'vertical':
+            sortChessList = chessList.sort(function(a, b) {
+                if (+a.dataset.Y > +b.dataset.Y) {
+                    return 1;
+                } else if (+a.dataset.Y < +b.dataset.Y) {
+                    return -1;
+                } 
+                return 0;
+            });
+            break;
+    }
+    return sortChessList;
 }
