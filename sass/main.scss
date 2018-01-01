@@ -33,7 +33,7 @@ $chessboard-width: 1200px;
     color: $color-white;
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 999;
 
     &__title {
         flex: auto;
@@ -46,6 +46,10 @@ $chessboard-width: 1200px;
         font-size: 2rem;
         background-color: $color-secondary;
         border-radius: 0.5rem;
+
+        &--hide {
+            display: none;
+        }
     }
 
     &__btn:hover {
@@ -125,7 +129,7 @@ $chessboard-width: 1200px;
     }    
 }
 
-.chess {
+.chessman {
     position: relative;
     top: calc(#{$chess-size} / 4 * 3 * -1);
     left: calc(#{$chess-size} / 4 * 1);
@@ -146,38 +150,88 @@ $chessboard-width: 1200px;
         }
     }
 
-    &--overlay {
+    &--victory {
+        z-index: 3;
+    }    
+
+    &__overlay {
         position: relative;
         bottom: $chess-size * 1.5;
         width: $chess-size;
         height: $chess-size;
         margin: 0 auto;
         border-radius: 50%;
-        animation: notice 1.5s infinite;
-        z-index: 0;
+
+        &--last {
+            animation: notice 1.5s infinite;
+        }
+        
+        &--victory {
+            z-index: 2;
+            animation: victory 1.5s infinite;
+        }
+    }
+}
+
+.gameover {
+    &__overlay {
+        z-index: 1;
+        position:  fixed;
+        top: 5.5rem;
+        width:  100vw;
+        height: calc(100vh - 5.5rem);
+        background: rgba($color-black, 0.4);
+    }
+
+    &__message {
+        position: fixed;
+        bottom: 2rem;
+        font-size: 3rem;
+        right: 1rem;
+        z-index: 3;
+        color: rgba($color-white, 0.8);
+        
+        // &--white {
+        //     color: rgba($color-white, 0.8);
+        // }
+
+        // &--black {
+        //     color: rgba($color-black, 0.8);
+        // }
+    }
+
+    &--hide {
+        display: none;
     }
 }
 
 // https://codepen.io/olam/pen/zcqea?editors=1100
-@keyframes notice {
-    0% {
-        width: $chess-size / 2;
-        height: $chess-size / 2;
-        transform: translateY($chess-size / 4);
-        background-color: rgba($color-tertiary, 0.9);
-    }   
+@mixin overlay($name, $color) {
+    @keyframes #{$name} {
+        @content;
+        0% {
+            width: $chess-size / 2;
+            height: $chess-size / 2;
+            transform: translateY($chess-size / 4);
+            background-color: rgba($color, 0.9);
+        }   
+        
+        70% {
+            width: $chess-size;
+            height: $chess-size;
+            transform: translateY(-0.3rem);
+            background-color: rgba($color, 0);
+        }
     
-    70% {
-        width: $chess-size;
-        height: $chess-size;
-        transform: translateY(-0.3rem);
-        background-color: rgba($color-tertiary, 0);
-    }
-
-    100% {
-        width: $chess-size / 2;
-        height: $chess-size / 2;
-        transform: translateY($chess-size / 4);
-        background-color: rgba($color-tertiary, 0);
+        100% {
+            width: $chess-size / 2;
+            height: $chess-size / 2;
+            transform: translateY($chess-size / 4);
+            background-color: rgba($color, 0);
+        }
     }
 }
+
+
+@include overlay(notice, $color-tertiary) {}
+@include overlay(victory, lighten($color-primary, 10%)) {}

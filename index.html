@@ -7,17 +7,21 @@
     <link rel="stylesheet" href="css/main.css">
     <title>Gobang</title>
 </head>
-<body class="gobang">
+<body>
     <nav class="header header--primary">
         <div class="header__title">
-            <h1>Gobang 五子棋</h1>
+            <h1>Gobang</h1>
         </div>
-        <div class="header__btn pointer" onclick="test()">
+        <div class="header__btn pointer" onclick="start(event)">
             Start
         </div>
     </nav>
 
     <div class="chessboard"></div>
+    
+    <div class="gameover">
+        <div class="gameover__overlay"></div>
+    </div>
 
     <script src="./js/chess-query.js"></script>
     <script src="./js/main.js"></script>

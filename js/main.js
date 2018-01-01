@@ -3,32 +3,57 @@ var player,
     attackSide, 
     lastChess, 
     isCanvasSupport, 
-    victoryConditionList;
+    victoryConditionList,
+    gameoverElement;
 
 var CHESS_SIZE = 60,
     VICTORY_CONDITION = 5,
     SLASH_DISTANCE = 1.414,
     STRAIGHT_DISTANCE = 1;
 
-init();
+function start(event) {
+    event.target.innerText = 'Restart';
+    init();
+    cleanChessBoard();
+}
 
 /**
  * 遊戲初始化數值
  * 
  */
 function init() {
+    gameoverElement.classList.add('gameover--hide');
     player = { 
         whiteSide: { key: 'white', chesses: [] }, 
         blackSide: { key: 'black', chesses: [] }
     };
     attackSide = 'whiteSide';
     isCanvasSupport = checkIsCanvasSupprot();
-    // console.log(isCanvasSupport);
 }
 
-function test() {
-    console.log(player);
-    // isCheckmate();
+function cleanChessBoard() {
+    var chessColumn,
+        chesses,
+        overlays,
+        i,
+        j;
+    chessColumn = document.getElementsByClassName('selected');
+    chesses = document.getElementsByClassName('chessman');
+    overlays = document.getElementsByClassName('chessman__overlay');
+    for (i = 0; i < chessColumn.length; i++) {
+        console.log('chessColumn', i, chessColumn.length);
+        chessColumn[i].classList.remove('selected');
+    }
+
+    // for (i = 0; i < chesses.length; i++) {
+    //     console.log('chesses', i, chesses.length);
+    //     chesses[i].remove();
+    // }
+
+    // for (i = 0; i < overlays.length; i++) {
+    //     console.log('overlays', i, overlays.length);
+    //     overlays[i].remove();
+    // }    
 }
 
 /**
@@ -130,14 +155,22 @@ function test() {
 })();
 
 /**
+ * 取得遊戲結束時要顯示的背景
+ * 
+ */
+(function getGameoverElement() {
+    gameoverElement = document.getElementsByClassName('gameover')[0];
+})();
+
+/**
  * 建立下最後一手的棋格背景
  * 
  */
 function getOverlay(type) {
     var overlay;
     overlay = document.createElement('div');
-    overlay.classList.add('chess__overlay');
-    overlay.classList.add('chess__overlay--' + type);
+    overlay.classList.add('chessman__overlay');
+    overlay.classList.add('chessman__overlay--' + type);
     return overlay;
 };
 
@@ -182,6 +215,7 @@ function chess(event) {
             // 判斷這一棋是不是將軍
             if (isCheckmate()) {
                 console.log('checkmate ! ');
+                setVictoryMessage(attackSide);
             } else {
                 
             }
@@ -211,7 +245,7 @@ function createCanvasChess(player) {
     chessBox = document.createElement('canvas');
     chessBox.width = (CHESS_SIZE / 2);
     chessBox.height = (CHESS_SIZE / 2);
-    chessBox.classList.add('chess');
+    chessBox.classList.add('chessman');
     chess = chessBox.getContext("2d");
     chess.beginPath();
     chess.arc(15, 15, 15, 0, 2 * Math.PI);
@@ -229,9 +263,9 @@ function createCanvasChess(player) {
 function createDivChess(player) {
     var chess;
     chess = document.createElement('div');
-    chess.classList.add('chess');
-    chess.classList.add('chess__div');
-    chess.classList.add('chess__div--' + player.key);
+    chess.classList.add('chessman');
+    chess.classList.add('chessman__div');
+    chess.classList.add('chessman__div--' + player.key);
     return chess;
 }
 
@@ -290,7 +324,6 @@ function isCheckmate() {
         groupChessList, 
         group,
         sortChessList,
-        checkmateChess,
         checkmateChessList;
 
     checkmat = false;
@@ -303,12 +336,7 @@ function isCheckmate() {
                 sortChessList = getSortChesses(group, groupChessList[group]);
                 checkmateChessList = getCheckmateChesses(group, sortChessList);
                 if (checkmateChessList.length >= VICTORY_CONDITION) {
-                    console.log(checkmateChessList);
-                    removeOverlay();
-                    for (i = 0; i < checkmateChessList.length; i++) {
-                        checkmateChess = checkmateChessList[i];
-                        checkmateChess.appendChild(getOverlay('victory'));
-                    }
+                    setVictoryChesses(checkmateChessList);
                     checkmat = true;
                     return checkmat;
                 }
@@ -538,8 +566,40 @@ function removeOverlay() {
     var overlayList,
         i;
 
-    overlayList = document.getElementsByClassName('chess__overlay');
+    overlayList = document.getElementsByClassName('chessman__overlay');
     for (i = 0; i < overlayList.length; i++) {
         overlayList[i].remove();
     }
+}
+
+/**
+ * 高亮連線的棋子
+ * 
+ * @param {any} chessList 
+ */
+function setVictoryChesses(chessList) {
+    var checkmateChess, 
+        childNodes,
+        i,
+        j;
+    removeOverlay(chessList);
+    gameoverElement.classList.remove('gameover--hide');
+    for (i = 0; i < chessList.length; i++) {
+        checkmateChess = chessList[i];
+        childNodes = checkmateChess.childNodes;
+        for (j = 0; j < childNodes.length; j++) {
+            if (childNodes[j].className.indexOf('chessman') !== -1) {
+                childNodes[j].classList.add('chessman--victory');
+            }
+        }
+        checkmateChess.appendChild(getOverlay('victory'));
+    }
+}
+
+function setVictoryMessage(side) {
+    var message = document.createElement('div');
+    message.classList.add('gameover__message');
+    message.classList.add('gameover__message--' + player[side].key);
+    message.innerText = 'Winner is ' + side + ' !';
+    gameoverElement.appendChild(message);    
 }
