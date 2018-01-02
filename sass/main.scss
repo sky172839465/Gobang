@@ -20,8 +20,17 @@ $color-black: #000;
 // chess style
 $color-chessboard: #814b15;
 $chess-size: 60px;
-$chessboard-height: 990px;
-$chessboard-width: 1200px;
+$chessboard-height: 991px;
+$chessboard-width: 1201px;
+
+@mixin chessboard__column--outlay() {
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+    background-color: rgba($color-black, 0.25);
+}
 
 .header {
     display: flex;
@@ -74,9 +83,17 @@ $chessboard-width: 1200px;
 
 .chessboard {
     margin: 0.4rem auto;
-    width: calc(100% - 2rem);
+    width: calc(100% - 2rem + 1px);
     max-width: $chessboard-width;
     height: $chessboard-height;
+    padding-bottom: $chess-size / 2;
+    background-color: $color-chessboard;
+
+    &__canvas {
+        position: absolute;
+        left: $chess-size;
+        top: calc(5rem + #{$chess-size});
+    }
 
     &__row {
         display: flex;
@@ -91,6 +108,14 @@ $chessboard-width: 1200px;
         width: $chess-size;
         height: $chess-size;
 
+        &--canvas {
+            z-index: 1;
+        }
+
+        &--victory {
+            z-index: 2;
+        }
+
         &.selected {
             cursor: not-allowed;
         }
@@ -100,21 +125,19 @@ $chessboard-width: 1200px;
             z-index: 1;
         }
 
-        &:hover:not(.selected):after {
-            content: ' ';
-            width: 100%;
-            height: 100%;
-            display: block;
-            position: relative;
+        &--div:hover:not(.selected):after {
             bottom: $chess-size;
-            background-color: rgba($color-black, 0.25);
         }
+
+        &:hover:not(.selected):after {
+            @include chessboard__column--outlay();
+        }        
     }
 
     &__grid {
         display: flex;
         flex-direction: row;
-        background-color: $color-chessboard;
+        // background-color: $color-chessboard;
         height: calc(#{$chess-size} / 2);
 
         .chessboard__block {
@@ -142,13 +165,14 @@ $chessboard-width: 1200px;
 
 .chessman {
     position: relative;
-    top: calc(#{$chess-size} / 4 * 3 * -1);
+    top: calc(#{$chess-size} / 4 * 1);;
     left: calc(#{$chess-size} / 4 * 1);
     border-radius: 50%;
     box-shadow: 0 6px 20px 0px rgba($color-black, 0.4);
     z-index: 1;
 
     &__div {
+        top: calc(#{$chess-size} / 4 * 3 * -1);
         width: calc(#{$chess-size} / 2);
         height: calc(#{$chess-size} / 2);
 
@@ -162,23 +186,27 @@ $chessboard-width: 1200px;
     }
 
     &--victory {
-        z-index: 3;
+        z-index: 2;
     }    
 
     &__overlay {
         position: relative;
-        bottom: $chess-size * 1.5;
+        bottom: $chess-size * 0.5;
         width: $chess-size;
         height: $chess-size;
         margin: 0 auto;
         border-radius: 50%;
+
+        &--div {
+            bottom: $chess-size * 1.5;
+        }
 
         &--last {
             animation: notice 1.5s infinite;
         }
         
         &--victory {
-            z-index: 2;
+            z-index: 1;
             animation: victory 1.5s infinite;
         }
     }
