@@ -82,6 +82,7 @@ $chessboard-width: 1201px;
 }
 
 .chessboard {
+    position: relative;
     margin: 0.4rem auto;
     width: calc(100% - 2rem + 1px);
     max-width: $chessboard-width;
@@ -90,8 +91,9 @@ $chessboard-width: 1201px;
     background-color: $color-chessboard;
 
     &__canvas {
-        margin: -30rem auto;
+        margin: auto;
         position: absolute;
+        top: 0;
         bottom: 0;
         left: 0;
         right: 0;        
