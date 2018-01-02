@@ -267,8 +267,8 @@
             i;
 
         overlayList = document.getElementsByClassName('chessman__overlay');
-        for (i = 0; i < overlayList.length; i++) {
-            overlayList[i].remove();
+        while(overlayList.length > 0) {
+            overlayList[0].parentNode.removeChild(overlayList[0]);
         }
     }
 

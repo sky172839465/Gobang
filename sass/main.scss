@@ -46,6 +46,7 @@ $chessboard-width: 1200px;
         font-size: 2rem;
         background-color: $color-secondary;
         border-radius: 0.5rem;
+        z-index: 999;
 
         &--hide {
             display: none;
@@ -177,9 +178,10 @@ $chessboard-width: 1200px;
     &__overlay {
         z-index: 1;
         position:  fixed;
-        top: 5.5rem;
+        // top: 5.5rem;
+        top: 0;
         width:  100vw;
-        height: calc(100vh - 5.5rem);
+        height: 100vh;
         background: rgba($color-black, 0.4);
     }
 
