@@ -90,9 +90,11 @@ $chessboard-width: 1201px;
     background-color: $color-chessboard;
 
     &__canvas {
+        margin: -30rem auto;
         position: absolute;
-        left: $chess-size;
-        top: calc(5rem + #{$chess-size});
+        bottom: 0;
+        left: 0;
+        right: 0;        
     }
 
     &__row {

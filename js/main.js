@@ -99,8 +99,8 @@
 
         canvas = document.createElement("canvas");
         canvas.classList.add('chessboard__canvas');
-        canvas.width = Math.round(chessboard.clientWidth / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
-        canvas.height = Math.round(chessboard.clientHeight / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
+        canvas.width = Math.floor(chessboard.clientWidth / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
+        canvas.height = Math.floor(chessboard.clientHeight / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
         context = canvas.getContext("2d");
 
         context.save();  
