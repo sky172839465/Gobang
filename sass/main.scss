@@ -187,17 +187,11 @@ $chessboard-width: 1200px;
         position: fixed;
         bottom: 2rem;
         font-size: 3rem;
-        right: 1rem;
+        font-weight: bolder;
+        text-align: center;
         z-index: 3;
-        color: rgba($color-white, 0.8);
-        
-        // &--white {
-        //     color: rgba($color-white, 0.8);
-        // }
-
-        // &--black {
-        //     color: rgba($color-black, 0.8);
-        // }
+        width: 100%;
+        color: $color-white;
     }
 
     &--hide {
