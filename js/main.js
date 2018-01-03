@@ -7,7 +7,7 @@
         lastChess, 
         isCanvasSupport, 
         victoryConditionList,
-        gameoverElement;
+        gameoverElement = document.querySelector('.gameover');
 
     var CHESS_SIZE = 60,
         VICTORY_CONDITION = 5,
@@ -18,6 +18,7 @@
         start: start,
         init: init,
         cleanChessBoard: cleanChessBoard,
+        createChessBoard: createChessBoard,
         checkIsCanvasSupprot: checkIsCanvasSupprot,
         getOverlay: getOverlay,
         chess: chess,
@@ -40,6 +41,7 @@
         event.target.innerText = 'Restart';
         init();
         cleanChessBoard();
+        createChessBoard();
     }
 
     /**
@@ -61,28 +63,88 @@
      * 
      */
     function cleanChessBoard() {
-        var chessColumn,
-            chesses,
-            overlays,
-            i,
-            j;
+        var chessboard;
         
-        chessColumn = document.getElementsByClassName('selected');
-        chesses = document.getElementsByClassName('chessman');
-        overlays = document.getElementsByClassName('chessman__overlay');
+        chessboard = document.querySelector('.chessboard');
 
-        while(chessColumn.length > 0){
-            chessColumn[0].classList.remove('selected');
+        chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
+        chessboard.style.width= chessboard.clientWidth + 'px';
+
+        while(chessboard.childNodes.length > 0){
+            chessboard.childNodes[0].parentNode.removeChild(chessboard.childNodes[0]);
         }
 
-        while(chesses.length > 0){
-            chesses[0].parentNode.removeChild(chesses[0]);
-        }
+        // var chessColumns,
+        //     chesses,
+        //     overlays;        
+
+        // chessColumns = document.getElementsByClassName('selected');
+        // chesses = document.getElementsByClassName('chessman');
+        // overlays = document.getElementsByClassName('chessman__overlay');
+
+        // while(chessColumns.length > 0){
+        //     chessColumns[0].classList.remove('selected');
+        // }
+
+        // while(chesses.length > 0){
+        //     chesses[0].parentNode.removeChild(chesses[0]);
+        // }
         
-        while(overlays.length > 0){
-            overlays[0].parentNode.removeChild(overlays[0]);
-        }    
+        // while(overlays.length > 0){
+        //     overlays[0].parentNode.removeChild(overlays[0]);
+        // }
     }
+
+    /**
+     * 畫出棋盤
+     * 
+     */
+    function createChessBoard() {
+        var chessRow, 
+            chessColumn,
+            gridChessColumn,
+            i, 
+            j;
+
+        var chessboard = document.querySelector('.chessboard');
+
+        // 準備畫圖時把棋盤寬度定死，避免調整瀏覽器大小的時候影響棋格
+        chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
+        chessboard.style.width= chessboard.clientWidth + 'px';
+
+        var chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE);
+        var chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
+
+        if (checkIsCanvasSupprot()) {
+            drawGridByCanvas(chessboard);
+        }        
+
+        for (i = 0; i < chessboardRows; i++) {
+            // 棋盤列
+            chessRow = document.createElement('div');
+            chessRow.classList.add('chessboard__row');
+            for (j = 0; j < chessboardColumns; j++) {
+                // 棋盤欄
+                chessColumn = document.createElement('div');
+                chessColumn.classList.add('chessboard__column');
+                chessColumn.classList.add('pointer');
+                chessColumn.dataset.Y = i;
+                chessColumn.dataset.X = j;            
+                // 下棋事件
+                chessColumn.onclick = function(event) { chess(event) };
+
+                if (checkIsCanvasSupprot()) { 
+                    chessColumn.classList.add('chessboard__column--canvas');
+                    chessRow.appendChild(chessColumn);
+                } else {
+                    chessColumn.classList.add('chessboard__column--div');
+                    gridChessColumn = drawGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j);
+                    chessRow.appendChild(gridChessColumn);
+                }
+            }
+            chessboard.appendChild(chessRow);
+        }
+    }    
 
     /**
      * 用canvas畫出棋格
@@ -429,65 +491,11 @@
      * @param {any} side 
      */
     function setVictoryMessage(side) {
-        var message = document.getElementsByClassName('gameover__message')[0];
+        var message = document.querySelector('.gameover__message');
         message.innerText = 'Winner is ' + side + ' !';
     }    
 
     window.gobang = gobang;
-
-    /**
-     * 畫出棋盤
-     * 
-     */
-    (function createChessBoard() {
-        var chessRow, 
-            chessColumn,
-            gridChessColumn,
-            i, 
-            j;
-
-        var chessboard = document.querySelector('.chessboard');
-        var chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE);
-        var chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
-
-        if (checkIsCanvasSupprot()) {
-            drawGridByCanvas(chessboard);
-        }        
-
-        for (i = 0; i < chessboardRows; i++) {
-            // 棋盤列
-            chessRow = document.createElement('div');
-            chessRow.classList.add('chessboard__row');
-            for (j = 0; j < chessboardColumns; j++) {
-                // 棋盤欄
-                chessColumn = document.createElement('div');
-                chessColumn.classList.add('chessboard__column');
-                chessColumn.classList.add('pointer');
-                chessColumn.dataset.Y = i;
-                chessColumn.dataset.X = j;            
-                // 下棋事件
-                chessColumn.onclick = function(event) { chess(event) };
-
-                if (checkIsCanvasSupprot()) { 
-                    chessColumn.classList.add('chessboard__column--canvas');
-                    chessRow.appendChild(chessColumn);
-                } else {
-                    chessColumn.classList.add('chessboard__column--div');
-                    gridChessColumn = drawGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j);
-                    chessRow.appendChild(gridChessColumn);
-                }
-            }
-            chessboard.appendChild(chessRow);
-        }
-    })();
-
-    /**
-     * 取得遊戲結束時要顯示的背景
-     * 
-     */
-    (function getGameoverElement() {
-        gameoverElement = document.getElementsByClassName('gameover')[0];
-    })();
 
 })();
 

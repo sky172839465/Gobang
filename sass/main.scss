@@ -96,7 +96,7 @@ $chessboard-width: 1201px;
         top: 0;
         bottom: 0;
         left: 0;
-        right: 0;        
+        right: 0;
     }
 
     &__row {
@@ -270,6 +270,13 @@ $chessboard-width: 1201px;
     }
 }
 
-
 @include overlay(notice, $color-tertiary) {}
 @include overlay(victory, lighten($color-primary, 10%)) {}
+
+// IE10+
+// https://stackoverflow.com/a/41714276/5003128
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .chessboard__canvas {
+        margin-top: $chess-size / 2;
+    }
+}
