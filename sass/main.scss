@@ -141,7 +141,6 @@ $chessboard-width: 1201px;
     &__grid {
         display: flex;
         flex-direction: row;
-        // background-color: $color-chessboard;
         height: calc(#{$chess-size} / 2);
 
         .chessboard__block {
@@ -279,4 +278,17 @@ $chessboard-width: 1201px;
     .chessboard__canvas {
         margin-top: $chess-size / 2;
     }
+
+    .chessboard__block {
+        &.chessboard__block--top-left,
+        &.chessboard__block--bottom-right {
+            height: calc(#{$chess-size} / 2 + 1px);
+        }
+        
+        &.chessboard__block--bottom-left {
+            width: calc(#{$chess-size} / 2 + 1px);
+        }
+    }
+
+
 }
