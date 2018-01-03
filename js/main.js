@@ -2,17 +2,16 @@
 
     var gobang = {};
 
-    var player, 
-        attackSide, 
-        lastChess, 
-        isCanvasSupport, 
-        victoryConditionList,
-        gameoverElement = document.querySelector('.gameover');
+    var player, attackSide, lastChess, isCanvasSupport, gameoverElement,
+        victoryConditionList = [];
 
     var CHESS_SIZE = 60,
         VICTORY_CONDITION = 5,
         SLASH_DISTANCE = 1.414,
         STRAIGHT_DISTANCE = 1;
+
+    isCanvasSupport = checkIsCanvasSupprot(),
+    gameoverElement = document.querySelector('.gameover');        
 
     gobang = {
         start: start,
@@ -55,7 +54,6 @@
             blackSide: { key: 'black', chesses: [] }
         };
         attackSide = 'whiteSide';
-        isCanvasSupport = checkIsCanvasSupprot();
     }
 
     /**
@@ -100,23 +98,20 @@
      * 
      */
     function createChessBoard() {
-        var chessRow, 
-            chessColumn,
-            gridChessColumn,
-            i, 
-            j;
+        var chessRow, chessColumn, gridByDiv, gridByCanvas, i, j, 
+            chessboard, chessboardRows, chessboardColumns;
 
-        var chessboard = document.querySelector('.chessboard');
+        chessboard = document.querySelector('.chessboard'),
+        chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE),
+        chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
 
         // 準備畫圖時把棋盤寬度定死，避免調整瀏覽器大小的時候影響棋格
         chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
         chessboard.style.width= chessboard.clientWidth + 'px';
 
-        var chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE);
-        var chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
-
-        if (checkIsCanvasSupprot()) {
-            drawGridByCanvas(chessboard);
+        if (isCanvasSupport) {
+            gridByCanvas = getGridByCanvas(chessboard);
+            chessboard.appendChild(gridByCanvas);
         }        
 
         for (i = 0; i < chessboardRows; i++) {
@@ -133,13 +128,13 @@
                 // 下棋事件
                 chessColumn.onclick = function(event) { chess(event) };
 
-                if (checkIsCanvasSupprot()) { 
+                if (isCanvasSupport) { 
                     chessColumn.classList.add('chessboard__column--canvas');
                     chessRow.appendChild(chessColumn);
                 } else {
                     chessColumn.classList.add('chessboard__column--div');
-                    gridChessColumn = drawGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j);
-                    chessRow.appendChild(gridChessColumn);
+                    gridByDiv = getGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j);
+                    chessRow.appendChild(gridByDiv);
                 }
             }
             chessboard.appendChild(chessRow);
@@ -151,9 +146,8 @@
      * 
      * @param {any} chessboard 
      */
-    function drawGridByCanvas(chessboard) {
-        var canvas,
-            context,
+    function getGridByCanvas(chessboard) {
+        var canvas, context,
             stepX = 0, 
             stepY = 0, 
             lineWidth = 1, 
@@ -167,7 +161,8 @@
 
         context.save();  
         context.lineWidth = lineWidth;  
-        context.strokeStyle = color;  
+        context.strokeStyle = color; 
+
         for(var i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE){  
             context.beginPath();  
             context.moveTo(0, i);  
@@ -181,9 +176,10 @@
             context.lineTo(i, context.canvas.height);  
             context.stroke();
         }  
+
         context.restore();
 
-        chessboard.appendChild(canvas);
+        return canvas;
     }
 
     /**
@@ -196,17 +192,10 @@
      * @param {any} j 
      * @returns 
      */
-    function drawGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j) {
-        var chessColumnBlockRow,
-            chessColumnBlockItem,
-            blockColor,
-            gridPosition,
-            gridAmount,
-            k,
-            m;
-
-        gridAmount = 0;
-        gridPosition = ['top-left', 'top-right', 'bottom-left', 'bottom-right']
+    function getGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j) {
+        var chessColumnBlockRow, chessColumnBlockItem,  blockColor, k, m,
+            gridPosition = ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+            gridAmount = 0;
 
         for(k = 0; k < 2; k++) {
             chessColumnBlockRow = document.createElement('div');
@@ -285,12 +274,16 @@
      */
     function getOverlay(type) {
         var overlay;
+        
         overlay = document.createElement('div');
         overlay.classList.add('chessman__overlay');
+        
         if (!isCanvasSupport) {
             overlay.classList.add('chessman__overlay--div');
-        }        
+        }
+        
         overlay.classList.add('chessman__overlay--' + type);
+
         return overlay;
     };
 
@@ -300,10 +293,8 @@
      * @param {any} event 下棋事件
      */
     function chess(event) {
-        var target, 
-            player, 
-            chess,
-            overlay;
+        var target, player, overlay, chess;
+
         target = event.target;
         player = getPlayer();
         overlay = getOverlay('last');
@@ -339,7 +330,7 @@
                     setVictoryMessage(attackSide);
                 }
             }
-            changeAttackPlayer();
+            attackSide = changeAttackPlayer(attackSide);
         }
     }
 
@@ -360,15 +351,18 @@
      */
     function createCanvasChess(player) {
         var chessBox, chess;
+
         chessBox = document.createElement('canvas');
         chessBox.width = (CHESS_SIZE / 2);
         chessBox.height = (CHESS_SIZE / 2);
         chessBox.classList.add('chessman');
         chess = chessBox.getContext("2d");
+
         chess.beginPath();
         chess.arc(15, 15, 15, 0, 2 * Math.PI);
         chess.fillStyle = player.key;
         chess.fill();
+
         return chessBox;
     }
 
@@ -380,10 +374,12 @@
      */
     function createDivChess(player) {
         var chess;
+
         chess = document.createElement('div');
         chess.classList.add('chessman');
         chess.classList.add('chessman__div');
         chess.classList.add('chessman__div--' + player.key);
+
         return chess;
     }
 
@@ -391,11 +387,11 @@
      * 切換下棋角色
      * 
      */
-    function changeAttackPlayer() {
-        if (attackSide === 'whiteSide') {
-            attackSide = 'blackSide';
+    function changeAttackPlayer(side) {
+        if (side === 'whiteSide') {
+            return 'blackSide';
         } else {
-            attackSide = 'whiteSide';
+            return 'whiteSide';
         }
     }
 
@@ -404,15 +400,9 @@
      * 
      */
     function isCheckmate() {
-        var checkmat, 
-            rangeChessList, 
-            groupChessList, 
-            group,
-            sortChessList,
-            checkmateChessList,
-            expectDistance;
-
-        checkmat = false;
+        var rangeChessList, groupChessList, group, sortChessList, checkmateChessList, expectDistance,
+            checkmat = false;
+        
         rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, lastChess, player, attackSide);
 
         if (rangeChessList.length >= VICTORY_CONDITION) {
@@ -433,7 +423,9 @@
 
                     sortChessList = chessQuery.getSortChesses(group, groupChessList[group]);
                     checkmateChessList = chessQuery.getCheckmateChesses(VICTORY_CONDITION, expectDistance, sortChessList);
+
                     if (checkmateChessList.length >= VICTORY_CONDITION) {
+                        removeOverlay();
                         setVictoryChesses(checkmateChessList);
                         checkmat = true;
                         return checkmat;
@@ -441,6 +433,7 @@
                 }
             }
         }
+
         return checkmat;
     }
 
@@ -449,8 +442,7 @@
      * 
      */
     function removeOverlay() {
-        var overlayList,
-            i;
+        var overlayList;
 
         overlayList = document.getElementsByClassName('chessman__overlay');
         while(overlayList.length > 0) {
@@ -464,12 +456,8 @@
      * @param {any} chessList 
      */
     function setVictoryChesses(chessList) {
-        var checkmateChess, 
-            childNodes,
-            i,
-            j;
-        removeOverlay(chessList);
-        gameoverElement.classList.remove('gameover--hide');
+        var checkmateChess, childNodes, i, j;
+
         for (i = 0; i < chessList.length; i++) {
             checkmateChess = chessList[i];
             if (isCanvasSupport) {
@@ -491,8 +479,11 @@
      * @param {any} side 
      */
     function setVictoryMessage(side) {
-        var message = document.querySelector('.gameover__message');
+        var message;
+        
+        message = document.querySelector('.gameover__message');
         message.innerText = 'Winner is ' + side + ' !';
+        gameoverElement.classList.remove('gameover--hide');
     }    
 
     window.gobang = gobang;
