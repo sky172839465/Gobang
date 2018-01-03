@@ -1,0 +1,103 @@
+.chessboard {
+    position: relative;
+    margin: 0.4rem auto;
+    width: calc(100% - 2rem + 1px);
+    max-width: $chessboard-width;
+    height: $chessboard-height;
+    padding-bottom: $chess-size / 2;
+    background-color: $color-chessboard;
+
+    &__canvas {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    &__row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        height: $chess-size;
+    }
+
+    &__column {
+        
+        width: $chess-size;
+        height: $chess-size;
+
+        &--canvas {
+            z-index: 1;
+        }
+
+        &--victory {
+            z-index: 2;
+        }
+
+        &.selected {
+            cursor: not-allowed;
+        }
+        
+        &:hover:not(.selected) {
+            outline: $color-primary solid 0.2rem;
+            z-index: 1;
+        }
+
+        &--div:hover:not(.selected):after {
+            bottom: $chess-size;
+        }
+
+        &:hover:not(.selected):after {
+            @include chessboard__column--outlay();
+        }        
+    }
+
+    &__grid {
+        display: flex;
+        flex-direction: row;
+        height: calc(#{$chess-size} / 2);
+
+        .chessboard__block {
+            width: calc(#{$chess-size} / 2);
+            height: calc(#{$chess-size} / 2);
+        }
+
+        .chessboard__block--top-left {
+            border-bottom: $color-black solid 1px;
+        }
+
+        .chessboard__block--top-right {
+            border-left: $color-black solid 1px;
+        }
+        
+        .chessboard__block--bottom-left {
+            border-right: $color-black solid 1px;
+        }
+        
+        .chessboard__block--bottom-right {
+            border-top: $color-black solid 1px;
+        }
+    }    
+}
+
+// IE10+
+// https://stackoverflow.com/a/41714276/5003128
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .chessboard__canvas {
+        margin-top: $chess-size / 2;
+    }
+
+    .chessboard__block {
+        &.chessboard__block--top-left,
+        &.chessboard__block--bottom-right {
+            height: calc(#{$chess-size} / 2 + 1px);
+        }
+        
+        &.chessboard__block--bottom-left {
+            width: calc(#{$chess-size} / 2 + 1px);
+        }
+    }
+}

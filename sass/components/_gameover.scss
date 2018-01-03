@@ -1,0 +1,26 @@
+.gameover {
+    &__overlay {
+        z-index: 1;
+        position:  fixed;
+        // top: 5.5rem;
+        top: 0;
+        width:  100vw;
+        height: 100vh;
+        background: rgba($color-black, 0.4);
+    }
+
+    &__message {
+        position: fixed;
+        bottom: 2rem;
+        font-size: 3rem;
+        font-weight: bolder;
+        text-align: center;
+        z-index: 3;
+        width: 100%;
+        color: $color-white;
+    }
+
+    &--hide {
+        display: none;
+    }
+}
