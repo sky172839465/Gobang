@@ -2,8 +2,7 @@
 
     var gobang = {};
 
-    var player, attackSide, lastChess, isCanvasSupport, gameoverElement,
-        victoryConditionList = [];
+    var player, attackSide, lastChess, isCanvasSupport, gameoverElement;
 
     var CHESS_SIZE = 60,
         VICTORY_CONDITION = 5,
@@ -14,22 +13,28 @@
     gameoverElement = document.querySelector('.gameover');        
 
     gobang = {
+        // output function 
         start: start,
-        init: init,
-        cleanChessBoard: cleanChessBoard,
-        createChessBoard: createChessBoard,
-        checkIsCanvasSupprot: checkIsCanvasSupprot,
-        getOverlay: getOverlay,
-        chess: chess,
-        getPlayer: getPlayer,
-        createCanvasChess: createCanvasChess,
-        createDivChess: createDivChess,
-        changeAttackPlayer: changeAttackPlayer,
-        isCheckmate: isCheckmate,
-        removeOverlay: removeOverlay,
-        setVictoryChesses: setVictoryChesses,
-        setVictoryMessage: setVictoryMessage
+        // global variables
+        player: player,
+        attackSide: attackSide,
+        lastChess: lastChess,
+        isCanvasSupport: isCanvasSupport,
+        gameoverElement: gameoverElement
     }
+
+    /**
+     * 判斷瀏覽器是否支援HTML5 Canvas
+     * https://stackoverflow.com/questions/2745432/best-way-to-detect-that-html5-canvas-is-not-supported?answertab=active#tab-top
+     * 
+     * @returns {boolean} 
+     */
+    function checkIsCanvasSupprot() {
+        var canvas;
+        canvas = document.createElement('canvas');
+        return !!(canvas.getContext && canvas.getContext('2d'));
+        // return false;
+    }    
 
     /**
      * 開始遊戲
@@ -48,12 +53,12 @@
      * 
      */
     function init() {
-        gameoverElement.classList.add('gameover--hide');
-        player = { 
+        gobang.gameoverElement.classList.add('gameover--hide');
+        gobang.player = { 
             whiteSide: { key: 'white', chesses: [] }, 
             blackSide: { key: 'black', chesses: [] }
         };
-        attackSide = 'whiteSide';
+        gobang.attackSide = 'whiteSide';
     }
 
     /**
@@ -109,7 +114,7 @@
         chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
         chessboard.style.width= chessboard.clientWidth + 'px';
 
-        if (isCanvasSupport) {
+        if (gobang.isCanvasSupport) {
             gridByCanvas = getGridByCanvas(chessboard);
             chessboard.appendChild(gridByCanvas);
         }        
@@ -128,7 +133,7 @@
                 // 下棋事件
                 chessColumn.onclick = function(event) { chess(event) };
 
-                if (isCanvasSupport) { 
+                if (gobang.isCanvasSupport) { 
                     chessColumn.classList.add('chessboard__column--canvas');
                     chessRow.appendChild(chessColumn);
                 } else {
@@ -256,19 +261,6 @@
     }
 
     /**
-     * 判斷瀏覽器是否支援HTML5 Canvas
-     * https://stackoverflow.com/questions/2745432/best-way-to-detect-that-html5-canvas-is-not-supported?answertab=active#tab-top
-     * 
-     * @returns {boolean} 
-     */
-    function checkIsCanvasSupprot() {
-        var canvas;
-        canvas = document.createElement('canvas');
-        return !!(canvas.getContext && canvas.getContext('2d'));
-        // return false;
-    }
-
-    /**
      * 建立下最後一手的棋格背景
      * 
      */
@@ -278,7 +270,7 @@
         overlay = document.createElement('div');
         overlay.classList.add('chessman__overlay');
         
-        if (!isCanvasSupport) {
+        if (!gobang.isCanvasSupport) {
             overlay.classList.add('chessman__overlay--div');
         }
         
@@ -286,6 +278,28 @@
 
         return overlay;
     };
+
+
+    /**
+     * 取得目前是哪個角色在下棋
+     * 
+     * @returns 現在下棋的角色
+     */
+    function getPlayer() {
+        return gobang.player[gobang.attackSide];
+    }
+
+    /**
+     * 切換下棋角色
+     * 
+     */
+    function changeAttackPlayer(side) {
+        if (side === 'whiteSide') {
+            return 'blackSide';
+        } else {
+            return 'whiteSide';
+        }
+    }    
 
     /**
      * 把新棋子放到棋盤上
@@ -306,7 +320,7 @@
 
         // 判斷棋格有沒有被選走
         if (target.className.indexOf('selected') === -1) {
-            if (isCanvasSupport) {
+            if (gobang.isCanvasSupport) {
                 chess = createCanvasChess(player);
             } else {
                 chess = createDivChess(player);
@@ -319,28 +333,19 @@
             target.appendChild(chess);
             target.classList.add('selected');
             target.appendChild(overlay);
-            lastChess = target;
+            gobang.lastChess = target;
             player.chesses.push(target);
 
             // 第一棋沒有最後一手
-            if (lastChess) {
+            if (gobang.lastChess) {
                 // 判斷這一棋是不是將軍
                 if (isCheckmate()) {
                     // console.log('checkmate ! ');
-                    setVictoryMessage(attackSide);
+                    setVictoryMessage(gobang.attackSide);
                 }
             }
-            attackSide = changeAttackPlayer(attackSide);
+            gobang.attackSide = changeAttackPlayer(gobang.attackSide);
         }
-    }
-
-    /**
-     * 取得目前是哪個角色在下棋
-     * 
-     * @returns 現在下棋的角色
-     */
-    function getPlayer() {
-        return player[attackSide];
     }
 
     /**
@@ -384,29 +389,18 @@
     }
 
     /**
-     * 切換下棋角色
-     * 
-     */
-    function changeAttackPlayer(side) {
-        if (side === 'whiteSide') {
-            return 'blackSide';
-        } else {
-            return 'whiteSide';
-        }
-    }
-
-    /**
      * 判斷是不是將軍了
      * 
      */
     function isCheckmate() {
-        var rangeChessList, groupChessList, group, sortChessList, checkmateChessList, expectDistance,
+        var rangeChessList, groupChessList, group, sortChessList, 
+            checkmateChessList, expectDistance,
             checkmat = false;
         
-        rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, lastChess, player, attackSide);
+        rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, gobang.lastChess, gobang.player, gobang.attackSide);
 
         if (rangeChessList.length >= VICTORY_CONDITION) {
-            groupChessList = chessQuery.getGroupChesses(rangeChessList, lastChess);
+            groupChessList = chessQuery.getGroupChesses(rangeChessList, gobang.lastChess);
             for (group in groupChessList) {
                 if (groupChessList[group].length >= VICTORY_CONDITION) {
 
@@ -460,7 +454,7 @@
 
         for (i = 0; i < chessList.length; i++) {
             checkmateChess = chessList[i];
-            if (isCanvasSupport) {
+            if (gobang.isCanvasSupport) {
                 checkmateChess.classList.add('chessboard__column--victory');
             }
             childNodes = checkmateChess.childNodes;
@@ -483,7 +477,7 @@
         
         message = document.querySelector('.gameover__message');
         message.innerText = 'Winner is ' + side + ' !';
-        gameoverElement.classList.remove('gameover--hide');
+        gobang.gameoverElement.classList.remove('gameover--hide');
     }    
 
     window.gobang = gobang;
