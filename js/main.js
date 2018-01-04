@@ -32,8 +32,8 @@
     function checkIsCanvasSupprot() {
         var canvas;
         canvas = document.createElement('canvas');
-        // return !!(canvas.getContext && canvas.getContext('2d'));
-        return false;
+        return !!(canvas.getContext && canvas.getContext('2d'));
+        // return false;
     }    
 
     /**
