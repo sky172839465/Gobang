@@ -7,13 +7,35 @@
     padding-bottom: $chess-size / 2;
     background-color: $color-chessboard;
 
-    &__canvas {
+    &__grid {
         margin: auto;
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
+
+        &--div {
+            background:
+                -webkit-linear-gradient(top, transparent calc(#{$chess-size} - 1px), $color-black $chess-size),
+                -webkit-linear-gradient(left, transparent calc(#{$chess-size} - 1px), $color-black $chess-size);
+            background:
+                -moz-linear-gradient(top, transparent calc(#{$chess-size} - 1px), $color-black $chess-size),
+                -moz-linear-gradient(left, transparent calc(#{$chess-size} - 1px), $color-black $chess-size);
+            background:
+                -o-linear-gradient(top, transparent calc(#{$chess-size} - 1px), $color-black $chess-size),
+                -o-linear-gradient(left, transparent calc(#{$chess-size} - 1px), $color-black $chess-size);
+            background:
+                -ms-linear-gradient(top, transparent calc(#{$chess-size} - 1px), $color-black $chess-size),
+                -ms-linear-gradient(left, transparent calc(#{$chess-size} - 1px), $color-black $chess-size);
+            background:
+                linear-gradient(top, transparent calc(#{$chess-size} - 1px), $color-black $chess-size),
+                linear-gradient(left, transparent calc(#{$chess-size} - 1px), $color-black $chess-size);                
+            background-size: $chess-size $chess-size;
+            background-repeat: repeat;
+            border-left: 1px solid;
+            border-top: 1px solid;
+        }
     }
 
     &__row {
@@ -28,10 +50,7 @@
         
         width: $chess-size;
         height: $chess-size;
-
-        &--canvas {
-            z-index: 1;
-        }
+        z-index: 1;
 
         &--victory {
             z-index: 2;
@@ -46,58 +65,16 @@
             z-index: 1;
         }
 
-        &--div:hover:not(.selected):after {
-            bottom: $chess-size;
-        }
-
         &:hover:not(.selected):after {
             @include chessboard__column--outlay();
         }        
     }
-
-    &__grid {
-        display: flex;
-        flex-direction: row;
-        height: calc(#{$chess-size} / 2);
-
-        .chessboard__block {
-            width: calc(#{$chess-size} / 2);
-            height: calc(#{$chess-size} / 2);
-        }
-
-        .chessboard__block--top-left {
-            border-bottom: $color-black solid 1px;
-        }
-
-        .chessboard__block--top-right {
-            border-left: $color-black solid 1px;
-        }
-        
-        .chessboard__block--bottom-left {
-            border-right: $color-black solid 1px;
-        }
-        
-        .chessboard__block--bottom-right {
-            border-top: $color-black solid 1px;
-        }
-    }    
 }
 
 // IE10+
 // https://stackoverflow.com/a/41714276/5003128
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .chessboard__canvas {
+    .chessboard__grid {
         margin-top: $chess-size / 2;
-    }
-
-    .chessboard__block {
-        &.chessboard__block--top-left,
-        &.chessboard__block--bottom-right {
-            height: calc(#{$chess-size} / 2 + 1px);
-        }
-        
-        &.chessboard__block--bottom-left {
-            width: calc(#{$chess-size} / 2 + 1px);
-        }
     }
 }

@@ -32,8 +32,8 @@
     function checkIsCanvasSupprot() {
         var canvas;
         canvas = document.createElement('canvas');
-        return !!(canvas.getContext && canvas.getContext('2d'));
-        // return false;
+        // return !!(canvas.getContext && canvas.getContext('2d'));
+        return false;
     }    
 
     /**
@@ -103,21 +103,26 @@
      * 
      */
     function createChessBoard() {
-        var chessRow, chessColumn, gridByDiv, gridByCanvas, i, j, 
+        var chessRow, chessColumn, gridByDiv, gridByCanvas, gridWidth, gridHeight, i, j, 
             chessboard, chessboardRows, chessboardColumns;
 
         chessboard = document.querySelector('.chessboard'),
         chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE),
         chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
+        gridWidth = chessboardColumns * CHESS_SIZE - (CHESS_SIZE - 1);
+        gridHeight = chessboardRows * CHESS_SIZE - (CHESS_SIZE - 1);
 
         // 準備畫圖時把棋盤寬度定死，避免調整瀏覽器大小的時候影響棋格
         chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
         chessboard.style.width= chessboard.clientWidth + 'px';
 
         if (gobang.isCanvasSupport) {
-            gridByCanvas = getGridByCanvas(chessboard);
+            gridByCanvas = getGridByCanvas(gridWidth, gridHeight);
             chessboard.appendChild(gridByCanvas);
-        }        
+        } else {
+            gridByDiv = getGridByDiv(gridWidth, gridHeight);
+            chessboard.appendChild(gridByDiv);
+        }
 
         for (i = 0; i < chessboardRows; i++) {
             // 棋盤列
@@ -132,15 +137,7 @@
                 chessColumn.dataset.X = j;            
                 // 下棋事件
                 chessColumn.onclick = function(event) { chess(event) };
-
-                if (gobang.isCanvasSupport) { 
-                    chessColumn.classList.add('chessboard__column--canvas');
-                    chessRow.appendChild(chessColumn);
-                } else {
-                    chessColumn.classList.add('chessboard__column--div');
-                    gridByDiv = getGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j);
-                    chessRow.appendChild(gridByDiv);
-                }
+                chessRow.appendChild(chessColumn);
             }
             chessboard.appendChild(chessRow);
         }
@@ -151,7 +148,7 @@
      * 
      * @param {any} chessboard 
      */
-    function getGridByCanvas(chessboard) {
+    function getGridByCanvas(gridWidth, gridHeight) {
         var canvas, context,
             stepX = 0, 
             stepY = 0, 
@@ -159,9 +156,9 @@
             color = 'black';
 
         canvas = document.createElement("canvas");
-        canvas.classList.add('chessboard__canvas');
-        canvas.width = Math.floor(chessboard.clientWidth / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
-        canvas.height = Math.floor(chessboard.clientHeight / CHESS_SIZE) * CHESS_SIZE - (CHESS_SIZE - 1);
+        canvas.classList.add('chessboard__grid');
+        canvas.width = gridWidth;
+        canvas.height = gridHeight;
         context = canvas.getContext("2d");
 
         context.save();  
@@ -188,76 +185,21 @@
     }
 
     /**
-     * 用div畫出棋格
+     * 用div畫出棋格 (.chessboard__grid--div)
      * 
-     * @param {any} chessboardRows 
-     * @param {any} chessboardColumns 
-     * @param {any} chessColumn 
-     * @param {any} i 
-     * @param {any} j 
+     * @param {any} div 
      * @returns 
      */
-    function getGridByDiv(chessboardRows, chessboardColumns, chessColumn, i, j) {
-        var chessColumnBlockRow, chessColumnBlockItem,  blockColor, k, m,
-            gridPosition = ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
-            gridAmount = 0;
+    function getGridByDiv(gridWidth, gridHeight) {
+        var div;
 
-        for(k = 0; k < 2; k++) {
-            chessColumnBlockRow = document.createElement('div');
-            chessColumnBlockRow.classList.add('chessboard__grid');
-            
-            for(m = 0; m < 2; m++) {
-                chessColumnBlockItem = document.createElement('div');
-                chessColumnBlockItem.classList.add('chessboard__block');
-                blockColor = 'chessboard__block--' + gridPosition[gridAmount];
-                if (i === 0) {
-                    if (j === 0) {
-                        if (gridAmount === 2 || gridAmount === 3) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else if (j === (chessboardColumns - 1)) {
-                        if (gridAmount === 2 || gridAmount === 0) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else {
-                        if (gridAmount !== 1) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    }
-                } else if (i === (chessboardRows-1)) {
-                    if (j === 0) {
-                        if (gridAmount === 1 || gridAmount === 3) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else if (j === (chessboardColumns - 1)) {
-                        if (gridAmount === 0 || gridAmount === 1) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else {
-                        if (gridAmount !== 2) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    }
-                } else {
-                    if (j === 0) {
-                        if (gridAmount !== 0) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else if (j === (chessboardColumns-1)) {
-                        if (gridAmount !== 3) {
-                            chessColumnBlockItem.classList.add(blockColor);
-                        }
-                    } else {
-                        chessColumnBlockItem.classList.add(blockColor);
-                    }
-                }
-                chessColumnBlockRow.appendChild(chessColumnBlockItem);
-                gridAmount++;                    
-            }
-            chessColumn.appendChild(chessColumnBlockRow);
-        }
+        div = document.createElement('div');
+        div.style.width = gridWidth + 'px';
+        div.style.height = gridHeight + 'px';
+        div.classList.add('chessboard__grid');
+        div.classList.add('chessboard__grid--div');
 
-        return chessColumn;
+        return div;
     }
 
     /**
@@ -454,9 +396,8 @@
 
         for (i = 0; i < chessList.length; i++) {
             checkmateChess = chessList[i];
-            if (gobang.isCanvasSupport) {
-                checkmateChess.classList.add('chessboard__column--victory');
-            }
+            checkmateChess.classList.add('chessboard__column--victory');
+
             childNodes = checkmateChess.childNodes;
             for (j = 0; j < childNodes.length; j++) {
                 if (childNodes[j].className.indexOf('chessman') !== -1) {

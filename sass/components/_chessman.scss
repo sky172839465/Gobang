@@ -1,13 +1,12 @@
 .chessman {
     position: relative;
-    top: calc(#{$chess-size} / 4 * 1);;
-    left: calc(#{$chess-size} / 4 * 1);
+    top: $chess-size / 4;
+    left: $chess-size / 4 ;
     border-radius: 50%;
-    box-shadow: 0 6px 20px 0px rgba($color-black, 0.4);
+    box-shadow: 0 0.5rem 1.3rem 0 rgba($color-black, 0.4);
     z-index: 1;
 
     &__div {
-        top: calc(#{$chess-size} / 4 * 3 * -1);
         width: calc(#{$chess-size} / 2);
         height: calc(#{$chess-size} / 2);
 
@@ -31,10 +30,6 @@
         height: $chess-size;
         margin: 0 auto;
         border-radius: 50%;
-
-        &--div {
-            bottom: $chess-size * 1.5;
-        }
 
         &--last {
             animation: notice 1.5s infinite;
