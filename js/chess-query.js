@@ -24,8 +24,8 @@
 
         rangeChessList = chessList.filter(function(chess) {
             item = chess.dataset;
-            if (Math.abs((+item.X) - targetPosition.X) < VICTORY_CONDITION &&
-                Math.abs((+item.Y) - targetPosition.Y) < VICTORY_CONDITION) {
+            if (Math.abs((+item.asixX) - targetPosition.asixX) < VICTORY_CONDITION &&
+                Math.abs((+item.asixY) - targetPosition.asixY) < VICTORY_CONDITION) {
                 return true;
             } else {
                 return false;
@@ -43,7 +43,7 @@
      * @returns 
      */
     function getGroupChesses(chessList, lastChess) {
-        var targetPosition, group, chess, item, asixX, asixY, i,
+        var targetPosition, group, chess, item, distanceX, distanceY, i,
             groupChessList = {
                 'leftTopToRightBottom': [],
                 'leftBottomToRightTop': [],
@@ -56,36 +56,36 @@
         for (i = 0; i < chessList.length; i++) {
             chess = chessList[i];
             item = chess.dataset;
-            asixX = Math.abs(+item.X - targetPosition.X);
-            asixY = Math.abs(+item.Y - targetPosition.Y);
+            distanceX = Math.abs(+item.asixX - targetPosition.asixX);
+            distanceY = Math.abs(+item.asixY - targetPosition.asixY);
             // 和最後一手的位置相減一樣才會在同一條斜線上 EX: [(0,0), (1,1), (2,2)]
-            if (asixX === asixY) {
+            if (distanceX === distanceY) {
                 // 左上和右下
-                if ((+item.X < targetPosition.X && +item.Y < targetPosition.Y) ||
-                    (+item.X > targetPosition.X && +item.Y > targetPosition.Y)) {
+                if ((+item.asixX < targetPosition.asixX && +item.asixY < targetPosition.asixY) ||
+                    (+item.asixX > targetPosition.asixX && +item.asixY > targetPosition.asixY)) {
                     groupChessList['leftTopToRightBottom'].push(chess);
 
                 }
                 // 左下和右上
-                else if ((+item.X < targetPosition.X && +item.Y > targetPosition.Y) ||
-                    (+item.X > targetPosition.X && +item.Y < targetPosition.Y)) {
+                else if ((+item.asixX < targetPosition.asixX && +item.asixY > targetPosition.asixY) ||
+                    (+item.asixX > targetPosition.asixX && +item.asixY < targetPosition.asixY)) {
                     groupChessList['leftBottomToRightTop'].push(chess);
 
                 }
                 // 將死一定要最後一手棋，所以放到每一組裡
-                else if (+item.X === targetPosition.X && +item.Y === targetPosition.Y) {
+                else if (+item.asixX === targetPosition.asixX && +item.asixY === targetPosition.asixY) {
                     for (group in groupChessList) {
                         groupChessList[group].push(chess);
                     }
                 }
             } 
             // 垂直 X軸一樣
-            else if (+item.X === targetPosition.X && +item.Y !== targetPosition.Y) {
+            else if (+item.asixX === targetPosition.asixX && +item.asixY !== targetPosition.asixY) {
                 groupChessList['vertical'].push(chess);
 
             } 
             // 水平 Y軸一樣
-            else if (+item.X !== targetPosition.X && +item.Y === targetPosition.Y) {
+            else if (+item.asixX !== targetPosition.asixX && +item.asixY === targetPosition.asixY) {
                 groupChessList['horizontal'].push(chess);
 
             }
@@ -108,9 +108,9 @@
             // 只有水平方向差別在Y軸都一樣所以用X軸排序
             case 'horizontal':        
                 sortChessList = chessList.sort(function(a, b) {
-                    if (+a.dataset.X > +b.dataset.X) {
+                    if (+a.dataset.asixX > +b.dataset.asixX) {
                         return 1;
-                    } else if (+a.dataset.X < +b.dataset.X) {
+                    } else if (+a.dataset.asixX < +b.dataset.asixX) {
                         return -1;
                     } 
                     return 0;
@@ -120,9 +120,9 @@
             case 'leftBottomToRightTop':
             case 'vertical':
                 sortChessList = chessList.sort(function(a, b) {
-                    if (+a.dataset.Y > +b.dataset.Y) {
+                    if (+a.dataset.asixY > +b.dataset.asixY) {
                         return 1;
-                    } else if (+a.dataset.Y < +b.dataset.Y) {
+                    } else if (+a.dataset.asixY < +b.dataset.asixY) {
                         return -1;
                     } 
                     return 0;
@@ -175,8 +175,8 @@
         var targetPosition;
 
         targetPosition = { 
-            X: +target.dataset.X, 
-            Y: +target.dataset.Y 
+            asixX: +target.dataset.asixX, 
+            asixY: +target.dataset.asixY 
         };
 
         return targetPosition;
@@ -190,12 +190,12 @@
      * @returns 
      */
     function getChessDistance(a, b) {
-        var axisX, axisY;
+        var distanceX, distanceY;
 
-        axisX = (+a.X) - (+b.X);
-        axisY = (+a.Y) - (+b.Y);
+        distanceX = (+a.asixX) - (+b.asixX);
+        distanceY = (+a.asixY) - (+b.asixY);
 
-        return +Math.pow((axisX * axisX + axisY * axisY), 0.5).toFixed(3);
+        return +Math.pow((distanceX * distanceX + distanceY * distanceY), 0.5).toFixed(3);
     }
 
     window.chessQuery = chessQuery;

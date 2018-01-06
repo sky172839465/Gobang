@@ -76,26 +76,6 @@
         while(chessboard.childNodes.length > 0){
             chessboard.childNodes[0].parentNode.removeChild(chessboard.childNodes[0]);
         }
-
-        // var chessColumns,
-        //     chesses,
-        //     overlays;        
-
-        // chessColumns = document.getElementsByClassName('selected');
-        // chesses = document.getElementsByClassName('chessman');
-        // overlays = document.getElementsByClassName('chessman__overlay');
-
-        // while(chessColumns.length > 0){
-        //     chessColumns[0].classList.remove('selected');
-        // }
-
-        // while(chesses.length > 0){
-        //     chesses[0].parentNode.removeChild(chesses[0]);
-        // }
-        
-        // while(overlays.length > 0){
-        //     overlays[0].parentNode.removeChild(overlays[0]);
-        // }
     }
 
     /**
@@ -133,8 +113,8 @@
                 chessColumn = document.createElement('div');
                 chessColumn.classList.add('chessboard__column');
                 chessColumn.classList.add('pointer');
-                chessColumn.dataset.Y = i;
-                chessColumn.dataset.X = j;            
+                chessColumn.dataset.asixX = j;
+                chessColumn.dataset.asixY = i;
                 // 下棋事件
                 chessColumn.onclick = function(event) { chess(event) };
                 chessRow.appendChild(chessColumn);
@@ -153,7 +133,8 @@
             stepX = 0, 
             stepY = 0, 
             lineWidth = 1, 
-            color = 'black';
+            color = 'black',
+            i;
 
         canvas = document.createElement("canvas");
         canvas.classList.add('chessboard__grid');
@@ -165,14 +146,14 @@
         context.lineWidth = lineWidth;  
         context.strokeStyle = color; 
 
-        for(var i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE){  
+        for(i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE){  
             context.beginPath();  
             context.moveTo(0, i);  
             context.lineTo(context.canvas.width, i);  
             context.stroke();
         }
   
-        for(var i = stepX + 0.5; i < context.canvas.width; i += CHESS_SIZE){  
+        for(i = stepX + 0.5; i < context.canvas.width; i += CHESS_SIZE){  
             context.beginPath();  
             context.moveTo(i, 0);  
             context.lineTo(i, context.canvas.height);  
