@@ -30,8 +30,7 @@
 
         rangeChessList = chessList.filter(function(chess) {
             item = chess.dataset;
-            if (Math.abs((+item.asixX) - targetPosition.asixX) < VICTORY_CONDITION &&
-                Math.abs((+item.asixY) - targetPosition.asixY) < VICTORY_CONDITION) {
+            if (isWithinScope(item, targetPosition, VICTORY_CONDITION)) {
                 return true;
             } else {
                 return false;
@@ -67,16 +66,12 @@
             // 和最後一手的位置相減一樣才會在同一條斜線上 EX: [(0,0), (1,1), (2,2)]
             if (distanceX === distanceY) {
                 // 左上和右下
-                if ((+item.asixX < targetPosition.asixX && +item.asixY < targetPosition.asixY) ||
-                    (+item.asixX > targetPosition.asixX && +item.asixY > targetPosition.asixY)) {
+                if (isFromLeftTopToRightBottomChess(item, targetPosition)) {
                     groupChessList['leftTopToRightBottom'].push(chess);
-
                 }
                 // 左下和右上
-                else if ((+item.asixX < targetPosition.asixX && +item.asixY > targetPosition.asixY) ||
-                    (+item.asixX > targetPosition.asixX && +item.asixY < targetPosition.asixY)) {
+                else if (isFromLeftBottomToRightTopChess(item, targetPosition)) {
                     groupChessList['leftBottomToRightTop'].push(chess);
-
                 }
                 // 將死一定要最後一手棋，所以放到每一組裡
                 else if (+item.asixX === targetPosition.asixX && +item.asixY === targetPosition.asixY) {
@@ -204,6 +199,54 @@
         distanceY = (+a.asixY) - (+b.asixY);
 
         return +Math.pow((distanceX * distanceX + distanceY * distanceY), 0.5).toFixed(3);
+    }
+
+    /**
+     * 判斷棋子是否在指定的範圍內
+     * 
+     * @param {any} other 其他棋子位置
+     * @param {any} target 最後一手棋位置
+     * @param {any} VICTORY_CONDITION 獲勝條件 
+     */
+    function isWithinScope(other, target, VICTORY_CONDITION) {
+        if (Math.abs((+other.asixX) - target.asixX) < VICTORY_CONDITION && 
+            Math.abs((+other.asixY) - target.asixY) < VICTORY_CONDITION) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 判斷這顆棋子是不是在最後一手棋的左上或右下
+     * 
+     * @param {any} other 其他棋子位置
+     * @param {any} target 最後一手棋位置
+     * @returns 
+     */
+    function isFromLeftTopToRightBottomChess(other, target) {
+        if ((+item.asixX < targetPosition.asixX && +item.asixY < targetPosition.asixY) ||
+            (+item.asixX > targetPosition.asixX && +item.asixY > targetPosition.asixY)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 判斷這顆棋子是不是在最後一手棋的左下或右上
+     * 
+     * @param {any} other 其他棋子位置
+     * @param {any} target 最後一手棋位置
+     * @returns 
+     */
+    function isFromLeftBottomToRightTopChess(other, target) {
+        if((+item.asixX < targetPosition.asixX && +item.asixY > targetPosition.asixY) ||
+            (+item.asixX > targetPosition.asixX && +item.asixY < targetPosition.asixY)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 })();
