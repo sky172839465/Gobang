@@ -225,8 +225,8 @@
      * @returns 
      */
     function isFromLeftTopToRightBottomChess(other, target) {
-        if ((+item.asixX < targetPosition.asixX && +item.asixY < targetPosition.asixY) ||
-            (+item.asixX > targetPosition.asixX && +item.asixY > targetPosition.asixY)) {
+        if ((+other.asixX < target.asixX && +other.asixY < target.asixY) ||
+            (+other.asixX > target.asixX && +other.asixY > target.asixY)) {
             return true;
         } else {
             return false;
@@ -241,8 +241,8 @@
      * @returns 
      */
     function isFromLeftBottomToRightTopChess(other, target) {
-        if((+item.asixX < targetPosition.asixX && +item.asixY > targetPosition.asixY) ||
-            (+item.asixX > targetPosition.asixX && +item.asixY < targetPosition.asixY)) {
+        if((+other.asixX < target.asixX && +other.asixY > target.asixY) ||
+            (+other.asixX > target.asixX && +other.asixY < target.asixY)) {
             return true;
         } else {
             return false;
