@@ -29,7 +29,7 @@
         chessList = attackPlayer.chesses;
 
         rangeChessList = chessList.filter(function(chess) {
-            item = chess.dataset;
+            item = getPosition(chess);
             if (isWithinScope(item, targetPosition, VICTORY_CONDITION)) {
                 return true;
             } else {
@@ -60,9 +60,9 @@
 
         for (i = 0; i < chessList.length; i++) {
             chess = chessList[i];
-            item = chess.dataset;
-            distanceX = Math.abs(+item.asixX - targetPosition.asixX);
-            distanceY = Math.abs(+item.asixY - targetPosition.asixY);
+            item = getPosition(chess);
+            distanceX = Math.abs(item.asixX - targetPosition.asixX);
+            distanceY = Math.abs(item.asixY - targetPosition.asixY);
             // 和最後一手的位置相減一樣才會在同一條斜線上 EX: [(0,0), (1,1), (2,2)]
             if (distanceX === distanceY) {
                 // 左上和右下
@@ -74,19 +74,19 @@
                     groupChessList['leftBottomToRightTop'].push(chess);
                 }
                 // 將死一定要最後一手棋，所以放到每一組裡
-                else if (+item.asixX === targetPosition.asixX && +item.asixY === targetPosition.asixY) {
+                else if (item.asixX === targetPosition.asixX && item.asixY === targetPosition.asixY) {
                     for (group in groupChessList) {
                         groupChessList[group].push(chess);
                     }
                 }
             } 
             // 垂直 X軸一樣
-            else if (+item.asixX === targetPosition.asixX && +item.asixY !== targetPosition.asixY) {
+            else if (item.asixX === targetPosition.asixX && item.asixY !== targetPosition.asixY) {
                 groupChessList['vertical'].push(chess);
 
             } 
             // 水平 Y軸一樣
-            else if (+item.asixX !== targetPosition.asixX && +item.asixY === targetPosition.asixY) {
+            else if (item.asixX !== targetPosition.asixX && item.asixY === targetPosition.asixY) {
                 groupChessList['horizontal'].push(chess);
 
             }
@@ -109,9 +109,12 @@
             // 只有水平方向差別在Y軸都一樣所以用X軸排序
             case 'horizontal':        
                 sortChessList = chessList.sort(function(a, b) {
-                    if (+a.dataset.asixX > +b.dataset.asixX) {
+                    var chessA, chessB;
+                    chessA = getPosition(a);
+                    chessB = getPosition(b);
+                    if (chessA.asixX > chessB.asixX) {
                         return 1;
-                    } else if (+a.dataset.asixX < +b.dataset.asixX) {
+                    } else if (chessA.asixX < chessB.asixX) {
                         return -1;
                     } 
                     return 0;
@@ -121,9 +124,12 @@
             case 'leftBottomToRightTop':
             case 'vertical':
                 sortChessList = chessList.sort(function(a, b) {
-                    if (+a.dataset.asixY > +b.dataset.asixY) {
+                    var chessA, chessB;
+                    chessA = getPosition(a);
+                    chessB = getPosition(b);                    
+                    if (chessA.asixY > chessB.asixY) {
                         return 1;
-                    } else if (+a.dataset.asixY < +b.dataset.asixY) {
+                    } else if (chessA.asixY < chessB.asixY) {
                         return -1;
                     } 
                     return 0;
@@ -178,8 +184,10 @@
         var targetPosition;
 
         targetPosition = { 
-            asixX: +target.dataset.asixX, 
-            asixY: +target.dataset.asixY 
+            // asixX: +target.dataset.asixX, 
+            // asixY: +target.dataset.asixY 
+            asixX: +target.getAttribute('data-asix-x'),
+            asixY: +target.getAttribute('data-asix-y')
         };
 
         return targetPosition;
@@ -209,8 +217,8 @@
      * @param {any} VICTORY_CONDITION 獲勝條件 
      */
     function isWithinScope(other, target, VICTORY_CONDITION) {
-        if (Math.abs((+other.asixX) - target.asixX) < VICTORY_CONDITION && 
-            Math.abs((+other.asixY) - target.asixY) < VICTORY_CONDITION) {
+        if (Math.abs(other.asixX - target.asixX) < VICTORY_CONDITION && 
+            Math.abs(other.asixY - target.asixY) < VICTORY_CONDITION) {
             return true;
         } else {
             return false;

@@ -121,8 +121,10 @@
                 chessColumn = document.createElement('div');
                 chessColumn.classList.add('chessboard__column');
                 chessColumn.classList.add('pointer');
-                chessColumn.dataset.asixX = j;
-                chessColumn.dataset.asixY = i;
+                chessColumn.setAttribute('data-asix-x', j);
+                chessColumn.setAttribute('data-asix-y', i);
+                // chessColumn.dataset.asixX = j;
+                // chessColumn.dataset.asixY = i;
                 // 下棋事件
                 chessColumn.onclick = function(event) { chess(event) };
                 chessRow.appendChild(chessColumn);

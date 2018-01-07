@@ -170,6 +170,7 @@ html {
     height: 5.5rem;
     width: auto; }
   .header__btn {
+    position: relative;
     width: auto;
     padding: 1rem;
     font-size: 2rem;
