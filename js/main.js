@@ -88,11 +88,13 @@
      * 
      */
     function createChessBoard() {
-        var chessRow, chessColumn, gridByDiv, gridByCanvas, gridWidth, gridHeight, i, j, 
-            chessboard, chessboardRows, chessboardColumns;
+        var chessRow, chessColumn, gridByDiv, gridByCanvas, gridWidth, gridHeight, 
+            chessboard, chessboardRows, chessboardColumns, i, j;
 
-        chessboard = document.querySelector('.chessboard'),
-        chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE),
+        chessboard = document.querySelector('.chessboard');
+        // 棋格列數
+        chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE);
+        // 棋格欄數
         chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
         gridWidth = chessboardColumns * CHESS_SIZE - (CHESS_SIZE - 1);
         gridHeight = chessboardRows * CHESS_SIZE - (CHESS_SIZE - 1);
@@ -109,6 +111,7 @@
             chessboard.appendChild(gridByDiv);
         }
 
+        // 畫出透明棋格讓棋子看起來像是在線的交叉點上
         for (i = 0; i < chessboardRows; i++) {
             // 棋盤列
             chessRow = document.createElement('div');
