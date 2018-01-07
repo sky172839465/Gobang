@@ -350,7 +350,7 @@
                     }
 
                     sortChessList = chessQuery.getSortChesses(group, groupChessList[group]);
-                    gobang.checkmateChessList = chessQuery.getCheckmateChesses(VICTORY_CONDITION, expectDistance, sortChessList);
+                    gobang.checkmateChessList = chessQuery.getConnectChesses(VICTORY_CONDITION, expectDistance, sortChessList);
 
                     if (gobang.checkmateChessList.length >= VICTORY_CONDITION) {
                         checkmat = true;

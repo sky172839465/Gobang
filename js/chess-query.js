@@ -7,9 +7,7 @@
         getRangeChesses: getRangeChesses,
         getGroupChesses: getGroupChesses,
         getSortChesses: getSortChesses,
-        getCheckmateChesses: getCheckmateChesses,
-        getPosition: getPosition,
-        getDistance: getDistance
+        getConnectChesses: getConnectChesses
     };
 
     window.chessQuery = chessQuery;    
@@ -147,7 +145,7 @@
      * @param {any} expectDistance 預期兩手棋間的距離
      * @param {any} chessList 
      */
-    function getCheckmateChesses(VICTORY_CONDITION, expectDistance, chessList) {
+    function getConnectChesses(VICTORY_CONDITION, expectDistance, chessList) {
         var itemChess, prevPosition, nextPosition, actualDistance, i,
             onlineChessList = [];
 
