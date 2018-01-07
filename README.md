@@ -31,7 +31,7 @@ Build in native HTML, CSS, Javascript
 3. IIFE
 4. JS doc
 
-Support Browser
+>Support Browser
 
 1. IE11
 2. Firefox
