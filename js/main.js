@@ -1,3 +1,8 @@
+
+function start(event) {
+    gobang.start(event);
+}
+
 (function() {
 
     var gobang = {};
@@ -88,7 +93,7 @@
      * 
      */
     function createChessBoard() {
-        var chessRow, chessColumn, gridByDiv, gridByCanvas, gridWidth, gridHeight, 
+        var chessRow, chessColumn, chessBoardGrid, gridWidth, gridHeight, 
             chessboard, chessboardRows, chessboardColumns, i, j;
 
         chessboard = document.querySelector('.chessboard');
@@ -103,13 +108,13 @@
         chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
         chessboard.style.width= chessboard.clientWidth + 'px';
 
+        // 畫出棋盤
         if (gobang.isCanvasSupport) {
-            gridByCanvas = getGridByCanvas(gridWidth, gridHeight);
-            chessboard.appendChild(gridByCanvas);
+            chessBoardGrid = getGridByCanvas(gridWidth, gridHeight);
         } else {
-            gridByDiv = getGridByDiv(gridWidth, gridHeight);
-            chessboard.appendChild(gridByDiv);
+            chessBoardGrid = getGridByDiv(gridWidth, gridHeight);
         }
+        chessboard.appendChild(chessBoardGrid);
 
         // 畫出透明棋格讓棋子看起來像是在線的交叉點上
         for (i = 0; i < chessboardRows; i++) {
@@ -139,12 +144,11 @@
      * @param {any} chessboard 
      */
     function getGridByCanvas(gridWidth, gridHeight) {
-        var canvas, context,
+        var canvas, context, i,
             stepX = 0, 
             stepY = 0, 
             lineWidth = 1, 
-            color = 'black',
-            i;
+            color = 'black';
 
         canvas = document.createElement("canvas");
         canvas.classList.add('chessboard__grid');
@@ -263,8 +267,8 @@
 
             // 把棋子放到十字上
             target.appendChild(chess);
-            target.classList.add('selected');
             target.appendChild(overlay);
+            target.classList.add('selected');
             gobang.lastChess = target;
             player.chesses.push(target);
 
@@ -330,28 +334,20 @@
         var attackPlayer, rangeChessList, groupChessList, group, sortChessList, expectDistance,
             checkmat = false;
         
-        attackPlayer = gobang.player[gobang.attackSide];
+        attackPlayer = getPlayer();
         rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, gobang.lastChess, attackPlayer);
 
+        // 範圍內棋子數量不足獲勝條件的棋子數就不需要判斷
         if (rangeChessList.length >= VICTORY_CONDITION) {
             groupChessList = chessQuery.getGroupChesses(gobang.lastChess, rangeChessList);
             for (group in groupChessList) {
+                // 分組內棋子不足獲勝條件的棋子數就不需要判斷
                 if (groupChessList[group].length >= VICTORY_CONDITION) {
-
-                    switch(group) {
-                        case 'leftTopToRightBottom':
-                        case 'leftBottomToRightTop':
-                            expectDistance = SLASH_DISTANCE;
-                            break;
-                        case 'vertical':
-                        case 'horizontal':
-                            expectDistance = STRAIGHT_DISTANCE;
-                            break;
-                    }
-
                     sortChessList = chessQuery.getSortChesses(group, groupChessList[group]);
+                    expectDistance = getExpectDistance(group);
                     gobang.checkmateChessList = chessQuery.getConnectChesses(VICTORY_CONDITION, expectDistance, sortChessList);
 
+                    // 連線棋子到達獲利條件的棋子數量代表獲勝了
                     if (gobang.checkmateChessList.length >= VICTORY_CONDITION) {
                         checkmat = true;
                         return checkmat;
@@ -377,12 +373,34 @@
     }
 
     /**
+     * 取得預期兩顆棋子的直線距離
+     * 
+     * @param {any} group 
+     */
+    function getExpectDistance(group) {
+        var expectDistance;
+
+        switch(group) {
+            case 'leftTopToRightBottom':
+            case 'leftBottomToRightTop':
+                expectDistance = SLASH_DISTANCE;
+                break;
+            case 'vertical':
+            case 'horizontal':
+                expectDistance = STRAIGHT_DISTANCE;
+                break;
+        }
+        
+        return expectDistance;
+    }
+
+    /**
      * 高亮連線的棋子
      * 
      * @param {any} chessList 
      */
     function setVictoryChesses(chessList) {
-        var checkmateChess, childNodes, i, j;
+        var checkmateChess, childNodes, victoryOverlay, i, j;
 
         for (i = 0; i < chessList.length; i++) {
             checkmateChess = chessList[i];
@@ -394,7 +412,8 @@
                     childNodes[j].classList.add('chessman--victory');
                 }
             }
-            checkmateChess.appendChild(getOverlay('victory'));
+            victoryOverlay = getOverlay('victory');
+            checkmateChess.appendChild(victoryOverlay);
         }
     }
 
@@ -409,10 +428,6 @@
         message = document.querySelector('.gameover__message');
         message.innerText = 'Winner is ' + side + ' !';
         gobang.gameoverElement.classList.remove('gameover--hide');
-    }    
+    }
 
 })();
-
-function start(event) {
-    gobang.start(event);
-}
