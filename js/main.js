@@ -2,7 +2,7 @@
 
     var gobang = {};
 
-    var player, attackSide, lastChess, isCanvasSupport, gameoverElement;
+    var player, attackSide, lastChess, isCanvasSupport, gameoverElement, checkmateChessList;
 
     var CHESS_SIZE = 60,
         VICTORY_CONDITION = 5,
@@ -10,8 +10,9 @@
         STRAIGHT_DISTANCE = 1;
 
     isCanvasSupport = checkIsCanvasSupprot(),
-    gameoverElement = document.querySelector('.gameover');        
+    gameoverElement = document.querySelector('.gameover');
 
+    // defined global variable in this IIFE
     gobang = {
         // output function 
         start: start,
@@ -20,8 +21,11 @@
         attackSide: attackSide,
         lastChess: lastChess,
         isCanvasSupport: isCanvasSupport,
-        gameoverElement: gameoverElement
+        gameoverElement: gameoverElement,
+        checkmateChessList: checkmateChessList
     }
+
+    window.gobang = gobang;    
 
     /**
      * 判斷瀏覽器是否支援HTML5 Canvas
@@ -59,6 +63,7 @@
             blackSide: { key: 'black', chesses: [] }
         };
         gobang.attackSide = 'whiteSide';
+        gobang.checkmateChessList = [];
     }
 
     /**
@@ -202,7 +207,6 @@
         return overlay;
     };
 
-
     /**
      * 取得目前是哪個角色在下棋
      * 
@@ -264,6 +268,8 @@
                 // 判斷這一棋是不是將軍
                 if (isCheckmate()) {
                     // console.log('checkmate ! ');
+                    removeOverlay();
+                    setVictoryChesses(gobang.checkmateChessList);
                     setVictoryMessage(gobang.attackSide);
                 }
             }
@@ -316,14 +322,14 @@
      * 
      */
     function isCheckmate() {
-        var rangeChessList, groupChessList, group, sortChessList, 
-            checkmateChessList, expectDistance,
+        var attackPlayer, rangeChessList, groupChessList, group, sortChessList, expectDistance,
             checkmat = false;
         
-        rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, gobang.lastChess, gobang.player, gobang.attackSide);
+        attackPlayer = gobang.player[gobang.attackSide];
+        rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, gobang.lastChess, attackPlayer);
 
         if (rangeChessList.length >= VICTORY_CONDITION) {
-            groupChessList = chessQuery.getGroupChesses(rangeChessList, gobang.lastChess);
+            groupChessList = chessQuery.getGroupChesses(gobang.lastChess, rangeChessList);
             for (group in groupChessList) {
                 if (groupChessList[group].length >= VICTORY_CONDITION) {
 
@@ -339,11 +345,9 @@
                     }
 
                     sortChessList = chessQuery.getSortChesses(group, groupChessList[group]);
-                    checkmateChessList = chessQuery.getCheckmateChesses(VICTORY_CONDITION, expectDistance, sortChessList);
+                    gobang.checkmateChessList = chessQuery.getCheckmateChesses(VICTORY_CONDITION, expectDistance, sortChessList);
 
-                    if (checkmateChessList.length >= VICTORY_CONDITION) {
-                        removeOverlay();
-                        setVictoryChesses(checkmateChessList);
+                    if (gobang.checkmateChessList.length >= VICTORY_CONDITION) {
                         checkmat = true;
                         return checkmat;
                     }
@@ -401,8 +405,6 @@
         message.innerText = 'Winner is ' + side + ' !';
         gobang.gameoverElement.classList.remove('gameover--hide');
     }    
-
-    window.gobang = gobang;
 
 })();
 

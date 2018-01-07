@@ -2,25 +2,31 @@
     
     var chessQuery;
     
+    // defined output function
     chessQuery = {
         getRangeChesses: getRangeChesses,
         getGroupChesses: getGroupChesses,
         getSortChesses: getSortChesses,
         getCheckmateChesses: getCheckmateChesses,
-        getChessPosition: getChessPosition,
-        getChessDistance: getChessDistance
+        getPosition: getPosition,
+        getDistance: getDistance
     };
+
+    window.chessQuery = chessQuery;    
 
     /**
      * 把XY軸差距小於指定勝利條件(5)的棋子拿進來，只有這些有機會將軍
      * 
+     * @param {any} VICTORY_CONDITION 獲勝條件
+     * @param {any} lastChess 最後一手棋
+     * @param {any} attackPlayer 攻擊方
      * @returns 
      */
-    function getRangeChesses(VICTORY_CONDITION, lastChess, player, attackSide) {
+    function getRangeChesses(VICTORY_CONDITION, lastChess, attackPlayer) {
         var targetPosition, chessList, rangeChessList, item;
 
-        targetPosition = getChessPosition(lastChess);
-        chessList = player[attackSide].chesses;
+        targetPosition = getPosition(lastChess);
+        chessList = attackPlayer.chesses;
 
         rangeChessList = chessList.filter(function(chess) {
             item = chess.dataset;
@@ -38,11 +44,11 @@
     /**
      * 把棋子分組 (左上+右下), (左下+右上), (正上+正下), (正左+正右)
      * 
-     * @param {any} chessList 未被分組的棋子
      * @param {any} lastChess 用來當基準的最後一手棋
+     * @param {any} chessList 未被分組的棋子
      * @returns 
      */
-    function getGroupChesses(chessList, lastChess) {
+    function getGroupChesses(lastChess, chessList) {
         var targetPosition, group, chess, item, distanceX, distanceY, i,
             groupChessList = {
                 'leftTopToRightBottom': [],
@@ -51,7 +57,7 @@
                 'horizontal': []
             };
 
-        targetPosition = getChessPosition(lastChess);
+        targetPosition = getPosition(lastChess);
 
         for (i = 0; i < chessList.length; i++) {
             chess = chessList[i];
@@ -136,6 +142,8 @@
     /**
      * 判斷這個棋子組有沒有將軍了
      * 
+     * @param {any} VICTORY_CONDITION 獲勝條件
+     * @param {any} expectDistance 預期兩手棋間的距離
      * @param {any} chessList 
      */
     function getCheckmateChesses(VICTORY_CONDITION, expectDistance, chessList) {
@@ -147,10 +155,10 @@
             if (onlineChessList.length === 0) {
                 onlineChessList.push(itemChess);
             } else {
-                prevPosition = getChessPosition(onlineChessList[onlineChessList.length-1]);
-                nextPosition = getChessPosition(itemChess);
+                prevPosition = getPosition(onlineChessList[onlineChessList.length-1]);
+                nextPosition = getPosition(itemChess);
                 // 前一個位置和目前位置的距離
-                actualDistance = getChessDistance(prevPosition, nextPosition);
+                actualDistance = getDistance(prevPosition, nextPosition);
                 // 和預期不一樣代表兩個棋子不是連在一起的
                 if (expectDistance !== actualDistance) {
                 onlineChessList.length = 0;
@@ -171,7 +179,7 @@
      * 
      * @returns 
      */
-    function getChessPosition(target) {
+    function getPosition(target) {
         var targetPosition;
 
         targetPosition = { 
@@ -189,7 +197,7 @@
      * @param {any} b 
      * @returns 
      */
-    function getChessDistance(a, b) {
+    function getDistance(a, b) {
         var distanceX, distanceY;
 
         distanceX = (+a.asixX) - (+b.asixX);
@@ -197,7 +205,5 @@
 
         return +Math.pow((distanceX * distanceX + distanceY * distanceY), 0.5).toFixed(3);
     }
-
-    window.chessQuery = chessQuery;
 
 })();
