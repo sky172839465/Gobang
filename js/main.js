@@ -9,11 +9,6 @@ function start(event) {
 
     var player, attackSide, lastChess, gameoverElement, checkmateChessList;
 
-    var CHESS_SIZE = 60,
-        VICTORY_CONDITION = 5,
-        SLASH_DISTANCE = 1.414,
-        STRAIGHT_DISTANCE = 1;
-
     gameoverElement = document.querySelector('.gameover');
 
     // defined global variable in this IIFE
@@ -47,12 +42,12 @@ function start(event) {
         isCanvasSupport = !!(canvas.getContext && canvas.getContext('2d'));
 
         if (isCanvasSupport) {
-            gobang.getChessboardGrid = getGridByCanvas;
-            gobang.createChess = createCanvasChess;
+            gobang.getChessboardGrid = byCanvas.getGrid;
+            gobang.createChess = byCanvas.createChess;
             gobang.chessOverlayStyles = ['chessman__overlay'];
         } else {
-            gobang.getChessboardGrid = getGridByDiv;
-            gobang.createChess = createDivChess;
+            gobang.getChessboardGrid = byDiv.getGrid;
+            gobang.createChess = byDiv.createChess;
             gobang.chessOverlayStyles = [
                 'chessman__overlay', 
                 'chessman__overlay--div'
@@ -114,11 +109,11 @@ function start(event) {
 
         chessboard = document.querySelector('.chessboard');
         // 棋格列數
-        chessboardRows = Math.floor(chessboard.clientHeight / CHESS_SIZE);
+        chessboardRows = Math.floor(chessboard.clientHeight / chessDefined.CHESS_SIZE);
         // 棋格欄數
-        chessboardColumns = Math.floor(chessboard.clientWidth / CHESS_SIZE);
-        gridWidth = chessboardColumns * CHESS_SIZE - (CHESS_SIZE - 1);
-        gridHeight = chessboardRows * CHESS_SIZE - (CHESS_SIZE - 1);
+        chessboardColumns = Math.floor(chessboard.clientWidth / chessDefined.CHESS_SIZE);
+        gridWidth = chessboardColumns * chessDefined.CHESS_SIZE - (chessDefined.CHESS_SIZE - 1);
+        gridHeight = chessboardRows * chessDefined.CHESS_SIZE - (chessDefined.CHESS_SIZE - 1);
 
         // 準備畫圖時把棋盤寬度定死，避免調整瀏覽器大小的時候影響棋格
         chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
@@ -148,65 +143,6 @@ function start(event) {
             }
             chessboard.appendChild(chessRow);
         }
-    }    
-
-    /**
-     * 用canvas畫出棋格
-     * 
-     * @param {any} chessboard 
-     */
-    function getGridByCanvas (gridWidth, gridHeight) {
-        var canvas, context, i,
-            stepX = 0, 
-            stepY = 0, 
-            lineWidth = 1, 
-            color = 'black';
-
-        canvas = document.createElement("canvas");
-        canvas.classList.add('chessboard__grid');
-        canvas.width = gridWidth;
-        canvas.height = gridHeight;
-        context = canvas.getContext("2d");
-
-        context.save();  
-        context.lineWidth = lineWidth;  
-        context.strokeStyle = color; 
-
-        for (i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE) {  
-            context.beginPath();  
-            context.moveTo(0, i);  
-            context.lineTo(context.canvas.width, i);  
-            context.stroke();
-        }
-  
-        for (i = stepX + 0.5; i < context.canvas.width; i += CHESS_SIZE) {  
-            context.beginPath();  
-            context.moveTo(i, 0);  
-            context.lineTo(i, context.canvas.height);  
-            context.stroke();
-        }  
-
-        context.restore();
-
-        return canvas;
-    }
-
-    /**
-     * 用div畫出棋格 (.chessboard__grid--div)
-     * 
-     * @param {any} div 
-     * @returns 
-     */
-    function getGridByDiv (gridWidth, gridHeight) {
-        var div;
-
-        div = document.createElement('div');
-        div.style.width = gridWidth + 'px';
-        div.style.height = gridHeight + 'px';
-        div.classList.add('chessboard__grid');
-        div.classList.add('chessboard__grid--div');
-
-        return div;
     }
 
     /**
@@ -292,46 +228,6 @@ function start(event) {
     }
 
     /**
-     * 用canvas新增棋子
-     * 
-     * @param {any} player 目前下棋的角色
-     * @returns {Element}
-     */
-    function createCanvasChess(player) {
-        var chessBox, chess;
-
-        chessBox = document.createElement('canvas');
-        chessBox.width = (CHESS_SIZE / 2);
-        chessBox.height = (CHESS_SIZE / 2);
-        chessBox.classList.add('chessman');
-        chess = chessBox.getContext("2d");
-
-        chess.beginPath();
-        chess.arc(15, 15, 15, 0, 2 * Math.PI);
-        chess.fillStyle = player.key;
-        chess.fill();
-
-        return chessBox;
-    }
-
-    /**
-     * 用div新增棋子
-     * 
-     * @param {any} player 目前下棋的角色
-     * @returns {Element}
-     */
-    function createDivChess(player) {
-        var chess;
-
-        chess = document.createElement('div');
-        chess.classList.add('chessman');
-        chess.classList.add('chessman__div');
-        chess.classList.add('chessman__div--' + player.key);
-
-        return chess;
-    }
-
-    /**
      * 判斷是不是將軍了
      * 
      */
@@ -340,20 +236,20 @@ function start(event) {
             checkmat = false;
         
         attackPlayer = getPlayer();
-        rangeChessList = chessQuery.getRangeChesses(VICTORY_CONDITION, gobang.lastChess, attackPlayer);
+        rangeChessList = chessQuery.getRangeChesses(chessDefined.VICTORY_CONDITION, gobang.lastChess, attackPlayer);
 
         // 範圍內棋子數量不足獲勝條件的棋子數就不需要判斷
-        if (rangeChessList.length >= VICTORY_CONDITION) {
+        if (rangeChessList.length >= chessDefined.VICTORY_CONDITION) {
             groupChessList = chessQuery.getGroupChesses(gobang.lastChess, rangeChessList);
             for (group in groupChessList) {
                 // 分組內棋子不足獲勝條件的棋子數就不需要判斷
-                if (groupChessList[group].length >= VICTORY_CONDITION) {
+                if (groupChessList[group].length >= chessDefined.VICTORY_CONDITION) {
                     sortChessList = chessQuery.getSortChesses(group, groupChessList[group]);
                     expectDistance = getExpectDistance(group);
-                    gobang.checkmateChessList = chessQuery.getConnectChesses(VICTORY_CONDITION, expectDistance, sortChessList);
+                    gobang.checkmateChessList = chessQuery.getConnectChesses(chessDefined.VICTORY_CONDITION, expectDistance, sortChessList);
 
                     // 連線棋子到達獲利條件的棋子數量代表獲勝了
-                    if (gobang.checkmateChessList.length >= VICTORY_CONDITION) {
+                    if (gobang.checkmateChessList.length >= chessDefined.VICTORY_CONDITION) {
                         checkmat = true;
                         return checkmat;
                     }
@@ -388,11 +284,11 @@ function start(event) {
         switch(group) {
             case 'leftTopToRightBottom':
             case 'leftBottomToRightTop':
-                expectDistance = SLASH_DISTANCE;
+                expectDistance = chessDefined.SLASH_DISTANCE;
                 break;
             case 'vertical':
             case 'horizontal':
-                expectDistance = STRAIGHT_DISTANCE;
+                expectDistance = chessDefined.STRAIGHT_DISTANCE;
                 break;
         }
         
