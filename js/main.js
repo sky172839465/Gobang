@@ -44,14 +44,11 @@ function start(event) {
         if (isCanvasSupport) {
             gobang.getChessboardGrid = byCanvas.getGrid;
             gobang.createChess = byCanvas.createChess;
-            gobang.chessOverlayStyles = ['chessman__overlay'];
+            gobang.chessOverlayStyles = byCanvas.overlayStyles;
         } else {
             gobang.getChessboardGrid = byDiv.getGrid;
             gobang.createChess = byDiv.createChess;
-            gobang.chessOverlayStyles = [
-                'chessman__overlay', 
-                'chessman__overlay--div'
-            ];
+            gobang.chessOverlayStyles = byDiv.overlayStyles;
         }
     }    
 

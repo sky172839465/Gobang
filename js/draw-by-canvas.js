@@ -1,10 +1,12 @@
 (function() {
 
-    var byCanvas = {};
+    var byCanvas = {},
+        overlayStyles = ['chessman__overlay'];
 
     byCanvas = {
         getGrid: getGrid,
-        createChess: createChess
+        createChess: createChess,
+        overlayStyles: overlayStyles
     };
 
     window.byCanvas = byCanvas;

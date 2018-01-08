@@ -1,10 +1,15 @@
 (function() {
 
-    var byDiv = {};
+    var byDiv = {}, 
+        overlayStyles = [
+            'chessman__overlay', 
+            'chessman__overlay--div'
+        ];
 
     byDiv = {
         getGrid: getGrid,
-        createChess: createChess
+        createChess: createChess,
+        overlayStyles: overlayStyles
     };
 
     window.byDiv = byDiv;
