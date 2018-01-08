@@ -7,25 +7,28 @@ function start(event) {
 
     var gobang = {};
 
-    var player, attackSide, lastChess, isCanvasSupport, gameoverElement, checkmateChessList;
+    var player, attackSide, lastChess, gameoverElement, checkmateChessList;
 
     var CHESS_SIZE = 60,
         VICTORY_CONDITION = 5,
         SLASH_DISTANCE = 1.414,
         STRAIGHT_DISTANCE = 1;
 
-    isCanvasSupport = checkIsCanvasSupprot(),
     gameoverElement = document.querySelector('.gameover');
 
     // defined global variable in this IIFE
     gobang = {
         // output function 
         start: start,
+        // common function for canvas support 
+        getChessboardGrid: undefined,
+        createChess: undefined,
+        chessOverlayStyles: [],
         // global variables
         player: player,
         attackSide: attackSide,
         lastChess: lastChess,
-        isCanvasSupport: isCanvasSupport,
+        setCommonFunction: setCommonFunction,
         gameoverElement: gameoverElement,
         checkmateChessList: checkmateChessList
     }
@@ -33,16 +36,28 @@ function start(event) {
     window.gobang = gobang;    
 
     /**
-     * 判斷瀏覽器是否支援HTML5 Canvas
+     * 判斷瀏覽器支援不支援canvas, 不支援就改用div提供繪圖
      * https://stackoverflow.com/questions/2745432/best-way-to-detect-that-html5-canvas-is-not-supported?answertab=active#tab-top
      * 
      * @returns {boolean} 
      */
-    function checkIsCanvasSupprot() {
-        var canvas;
+    function setCommonFunction() {
+        var canvas, isCanvasSupport;
         canvas = document.createElement('canvas');
-        return !!(canvas.getContext && canvas.getContext('2d'));
-        // return false;
+        isCanvasSupport = !!(canvas.getContext && canvas.getContext('2d'));
+
+        if (isCanvasSupport) {
+            gobang.getChessboardGrid = getGridByCanvas;
+            gobang.createChess = createCanvasChess;
+            gobang.chessOverlayStyles = ['chessman__overlay'];
+        } else {
+            gobang.getChessboardGrid = getGridByDiv;
+            gobang.createChess = createDivChess;
+            gobang.chessOverlayStyles = [
+                'chessman__overlay', 
+                'chessman__overlay--div'
+            ];
+        }
     }    
 
     /**
@@ -52,6 +67,7 @@ function start(event) {
      */
     function start(event) {
         event.target.innerText = 'Restart';
+        setCommonFunction();
         init();
         cleanChessBoard();
         createChessBoard();
@@ -109,11 +125,7 @@ function start(event) {
         chessboard.style.width= chessboard.clientWidth + 'px';
 
         // 畫出棋盤
-        if (gobang.isCanvasSupport) {
-            chessBoardGrid = getGridByCanvas(gridWidth, gridHeight);
-        } else {
-            chessBoardGrid = getGridByDiv(gridWidth, gridHeight);
-        }
+        chessBoardGrid = gobang.getChessboardGrid(gridWidth, gridHeight);
         chessboard.appendChild(chessBoardGrid);
 
         // 畫出透明棋格讓棋子看起來像是在線的交叉點上
@@ -143,7 +155,7 @@ function start(event) {
      * 
      * @param {any} chessboard 
      */
-    function getGridByCanvas(gridWidth, gridHeight) {
+    function getGridByCanvas (gridWidth, gridHeight) {
         var canvas, context, i,
             stepX = 0, 
             stepY = 0, 
@@ -160,14 +172,14 @@ function start(event) {
         context.lineWidth = lineWidth;  
         context.strokeStyle = color; 
 
-        for(i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE){  
+        for (i = stepY + 0.5 ; i < context.canvas.height; i += CHESS_SIZE) {  
             context.beginPath();  
             context.moveTo(0, i);  
             context.lineTo(context.canvas.width, i);  
             context.stroke();
         }
   
-        for(i = stepX + 0.5; i < context.canvas.width; i += CHESS_SIZE){  
+        for (i = stepX + 0.5; i < context.canvas.width; i += CHESS_SIZE) {  
             context.beginPath();  
             context.moveTo(i, 0);  
             context.lineTo(i, context.canvas.height);  
@@ -185,7 +197,7 @@ function start(event) {
      * @param {any} div 
      * @returns 
      */
-    function getGridByDiv(gridWidth, gridHeight) {
+    function getGridByDiv (gridWidth, gridHeight) {
         var div;
 
         div = document.createElement('div');
@@ -205,12 +217,9 @@ function start(event) {
         var overlay;
         
         overlay = document.createElement('div');
-        overlay.classList.add('chessman__overlay');
-        
-        if (!gobang.isCanvasSupport) {
-            overlay.classList.add('chessman__overlay--div');
-        }
-        
+        gobang.chessOverlayStyles.forEach(function(chessOverlayStyle) {
+            overlay.classList.add(chessOverlayStyle);
+        });
         overlay.classList.add('chessman__overlay--' + type);
 
         return overlay;
@@ -256,11 +265,7 @@ function start(event) {
 
         // 判斷棋格有沒有被選走
         if (target.className.indexOf('selected') === -1) {
-            if (gobang.isCanvasSupport) {
-                chess = createCanvasChess(player);
-            } else {
-                chess = createDivChess(player);
-            }
+            chess = gobang.createChess(player);
 
             // 前一手棋移除最後一手的特效
             removeOverlay();
