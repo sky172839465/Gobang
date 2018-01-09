@@ -3,7 +3,7 @@ function start(event) {
     gobang.start(event);
 }
 
-(function() {
+(function(chessDefined, chessQuery, byCanvas, byDiv) {
 
     var gobang = {};
 
@@ -19,11 +19,11 @@ function start(event) {
         getChessboardGrid: undefined,
         createChess: undefined,
         chessOverlayStyles: [],
+        setCommonFunction: setCommonFunction,        
         // global variables
         player: player,
         attackSide: attackSide,
         lastChess: lastChess,
-        setCommonFunction: setCommonFunction,
         gameoverElement: gameoverElement,
         checkmateChessList: checkmateChessList
     }
@@ -328,4 +328,4 @@ function start(event) {
         gobang.gameoverElement.classList.remove('gameover--hide');
     }
 
-})();
+})(chessDefined, chessQuery, byCanvas, byDiv);
