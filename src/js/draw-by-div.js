@@ -11,7 +11,7 @@ const overlayStyles = [
  * @returns 
  */
 const getGrid = (gridWidth, gridHeight) => {
-    var div;
+    let div;
 
     div = document.createElement('div');
     div.style.width = gridWidth + 'px';
@@ -29,7 +29,7 @@ const getGrid = (gridWidth, gridHeight) => {
  * @returns {Element}
  */
 const createChess = (player) => {
-    var chess;
+    let chess;
 
     chess = document.createElement('div');
     chess.classList.add('chessman');

@@ -3,3 +3,6 @@
 
 # compile css 
 # /css/*
+
+# compile project
+# /dist/*

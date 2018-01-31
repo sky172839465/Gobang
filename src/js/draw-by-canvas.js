@@ -8,11 +8,12 @@ const overlayStyles = ['chessman__overlay'];
  * @param {any} chessboard 
  */
 const getGrid = (gridWidth, gridHeight) => {
-    var canvas, context, i,
-        stepX = 0, 
-        stepY = 0, 
-        lineWidth = 1, 
-        color = 'black';
+    let canvas, context, i, stepX, stepY, lineWidth, color;
+
+    stepX = 0;
+    stepY = 0;
+    lineWidth = 1;
+    color = 'black';
 
     canvas = document.createElement("canvas");
     canvas.classList.add('chessboard__grid');
@@ -50,7 +51,7 @@ const getGrid = (gridWidth, gridHeight) => {
  * @returns {Element}
  */
 const createChess = (player) => {
-    var chessBox, chess;
+    let chessBox, chess;
 
     chessBox = document.createElement('canvas');
     chessBox.width = (chessDefined.CHESS_SIZE / 2);

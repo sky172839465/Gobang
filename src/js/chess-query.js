@@ -7,12 +7,12 @@
  * @returns 
  */
 const getRangeChesses = (VICTORY_CONDITION, lastChess, attackPlayer) => {
-    var targetPosition, chessList, rangeChessList, item;
+    let targetPosition, chessList, rangeChessList, item;
 
     targetPosition = getPosition(lastChess);
     chessList = attackPlayer.chesses;
 
-    rangeChessList = chessList.filter(function(chess) {
+    rangeChessList = chessList.filter((chess) => {
         item = getPosition(chess);
         if (isWithinScope(item, targetPosition, VICTORY_CONDITION)) {
             return true;
@@ -32,13 +32,14 @@ const getRangeChesses = (VICTORY_CONDITION, lastChess, attackPlayer) => {
  * @returns 
  */
 const getGroupChesses = (lastChess, chessList) => {
-    var targetPosition, group, chess, item, distanceX, distanceY, i,
-        groupChessList = {
-            'leftTopToRightBottom': [],
-            'leftBottomToRightTop': [],
-            'vertical': [],
-            'horizontal': []
-        };
+    let targetPosition, group, chess, item, distanceX, distanceY, i, groupChessList;
+    
+    groupChessList = {
+        'leftTopToRightBottom': [],
+        'leftBottomToRightTop': [],
+        'vertical': [],
+        'horizontal': []
+    };
 
     targetPosition = getPosition(lastChess);
 
@@ -87,13 +88,13 @@ const getGroupChesses = (lastChess, chessList) => {
  * @returns 
  */
 const getSortChesses = (group, chessList) => {
-    var sortChessList;
+    let sortChessList;
 
     switch(group) {
         // 只有水平方向差別在Y軸都一樣所以用X軸排序
         case 'horizontal':        
-            sortChessList = chessList.sort(function(a, b) {
-                var chessA, chessB;
+            sortChessList = chessList.sort((a, b) => {
+                let chessA, chessB;
                 chessA = getPosition(a);
                 chessB = getPosition(b);
                 if (chessA.asixX > chessB.asixX) {
@@ -107,8 +108,8 @@ const getSortChesses = (group, chessList) => {
         case 'leftTopToRightBottom':            
         case 'leftBottomToRightTop':
         case 'vertical':
-            sortChessList = chessList.sort(function(a, b) {
-                var chessA, chessB;
+            sortChessList = chessList.sort((a, b) => {
+                let chessA, chessB;
                 chessA = getPosition(a);
                 chessB = getPosition(b);                    
                 if (chessA.asixY > chessB.asixY) {
@@ -132,8 +133,9 @@ const getSortChesses = (group, chessList) => {
  * @param {any} chessList 
  */
 const getConnectChesses = (VICTORY_CONDITION, expectDistance, chessList) => {
-    var itemChess, prevPosition, nextPosition, actualDistance, i,
-        connectChessList = [];
+    let itemChess, prevPosition, nextPosition, actualDistance, i, connectChessList;
+    
+    connectChessList = [];
 
     for (i = 0; i < chessList.length; i++) {
         itemChess = chessList[i];
@@ -165,7 +167,7 @@ const getConnectChesses = (VICTORY_CONDITION, expectDistance, chessList) => {
  * @returns 
  */
 const getPosition = (target) => {
-    var targetPosition;
+    let targetPosition;
 
     targetPosition = { 
         // asixX: +target.dataset.asixX, 
@@ -185,7 +187,7 @@ const getPosition = (target) => {
  * @returns 
  */
 const getDistance = (a, b) => {
-    var distanceX, distanceY;
+    let distanceX, distanceY;
 
     distanceX = a.asixX - b.asixX;
     distanceY = a.asixY - b.asixY;

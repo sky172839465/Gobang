@@ -16,7 +16,7 @@ let player, attackSide, lastChess, checkmateChessList,
  * @returns {boolean} 
  */
 const setCommonFunction = () => {
-    var canvas, isCanvasSupport;
+    let canvas, isCanvasSupport;
     canvas = document.createElement('canvas');
     isCanvasSupport = !!(canvas.getContext && canvas.getContext('2d'));
 
@@ -63,8 +63,7 @@ const init = () => {
  * 
  */
 const cleanChessBoard = () => {
-    var chessboard;
-    
+    let chessboard;
     chessboard = document.querySelector('.chessboard');
 
     chessboard.setAttribute('style', 'width:' + chessboard.clientWidth + 'px');
@@ -80,7 +79,7 @@ const cleanChessBoard = () => {
  * 
  */
 const createChessBoard = () => {
-    var chessRow, chessColumn, chessBoardGrid, gridWidth, gridHeight, 
+    let chessRow, chessColumn, chessBoardGrid, gridWidth, gridHeight, 
         chessboard, chessboardRows, chessboardColumns, i, j;
 
     chessboard = document.querySelector('.chessboard');
@@ -114,7 +113,7 @@ const createChessBoard = () => {
             // chessColumn.dataset.asixX = j;
             // chessColumn.dataset.asixY = i;
             // 下棋事件
-            chessColumn.onclick = function(event) { chess(event) };
+            chessColumn.onclick = (event) => { chess(event) };
             chessRow.appendChild(chessColumn);
         }
         chessboard.appendChild(chessRow);
@@ -126,10 +125,10 @@ const createChessBoard = () => {
  * 
  */
 const getOverlay = (type) => {
-    var overlay;
+    let overlay;
     
     overlay = document.createElement('div');
-    chessOverlayStyles.forEach(function(chessOverlayStyle) {
+    chessOverlayStyles.forEach((chessOverlayStyle) => {
         overlay.classList.add(chessOverlayStyle);
     });
     overlay.classList.add('chessman__overlay--' + type);
@@ -164,7 +163,7 @@ const changeAttackPlayer = (side) => {
  * @param {any} event 下棋事件
  */
 const chess = (event) => {
-    var target, player, overlay, chess;
+    let target, player, overlay, chess;
 
     target = event.target;
     player = getPlayer();
@@ -208,9 +207,10 @@ const chess = (event) => {
  * 
  */
 const isCheckmate = () => {
-    var attackPlayer, rangeChessList, groupChessList, group, sortChessList, expectDistance,
-        checkmat = false;
-    
+    let attackPlayer, rangeChessList, groupChessList, group, sortChessList, expectDistance,
+        checkmat;
+
+    checkmat = false;
     attackPlayer = getPlayer();
     rangeChessList = chessQuery.getRangeChesses(chessDefined.VICTORY_CONDITION, gobang.lastChess, attackPlayer);
 
@@ -255,7 +255,7 @@ const removeOverlay = () => {
  * @param {any} group 
  */
 const getExpectDistance = (group) => {
-    var expectDistance;
+    let expectDistance;
 
     switch(group) {
         case 'leftTopToRightBottom':
@@ -277,7 +277,7 @@ const getExpectDistance = (group) => {
  * @param {any} chessList 
  */
 const setVictoryChesses = (chessList) => {
-    var checkmateChess, childNodes, victoryOverlay, i, j;
+    let checkmateChess, childNodes, victoryOverlay, i, j;
 
     for (i = 0; i < chessList.length; i++) {
         checkmateChess = chessList[i];
@@ -300,25 +300,11 @@ const setVictoryChesses = (chessList) => {
  * @param {any} side 
  */
 const setVictoryMessage = (side) => {
-    var message;
+    let message;
     
     message = document.querySelector('.gameover__message');
     message.innerText = 'Winner is ' + side + ' !';
     gameoverElement.classList.remove('gameover--hide');
 }
 
-export {
-    // output function 
-    start,
-    // common function for canvas support 
-    getChessboardGrid,
-    createChess,
-    chessOverlayStyles,
-    setCommonFunction,
-    // global variables
-    player,
-    attackSide,
-    lastChess,
-    gameoverElement,
-    checkmateChessList
-};
+export { start };
