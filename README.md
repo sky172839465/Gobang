@@ -26,7 +26,7 @@ Build in native HTML, CSS, Javascript
 
 >Javascript
 
-1. ES5 (for old browser support)
+1. ES6
 2. hositing
 3. IIFE
 4. JS doc
@@ -37,3 +37,7 @@ Build in native HTML, CSS, Javascript
 2. Firefox
 3. Chrome
 4. Safari
+
+>Bundle
+
+1. Webpack2
