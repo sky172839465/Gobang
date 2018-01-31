@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name=theme-color content="#008b8b">
+    <meta name=description content="Gobang offline small game, 五子棋單機遊戲">
+    <meta name=author content=Hsunight>
+    <meta property=og:title content="Gobang">
+    <meta property=og:type content="website">
+    <meta property=og:url content="https://sky172839465.github.io/gobang">
+    <meta property=og:image content="https://sky172839465.github.io/gobang/img/gobang.png">
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="300" />
+    <meta property="og:image:height" content="302" />    
+    <meta property=og:description content="Gobang offline small game, 五子棋單機遊戲">
+    <meta property=og:site_name content="Gobang">
+    <link rel="icon" type="image/png" href="./img/favicon.png">
+    <title>Gobang</title>
+</head>
+<body>
+    <header class="header header--primary">
+        <div class="header__title">
+            <h1>
+                <a href="https://github.com/sky172839465/Gobang" target="_blank">
+                    <img class="octocat" src="./img/Octocat.png" alt="Gobang Source in Github">
+                </a>
+                Gobang
+            </h1>
+        </div>
+        <div class="header__btn pointer" onclick="start(event)">
+            Start
+        </div>
+    </header>
+
+    <div class="chessboard"></div>
+    
+    <div class="gameover">
+        <div class="gameover__overlay"></div>
+        <div class="gameover__message"></div>
+    </div>
+
+	<footer class="footer">
+		<p>Yusong Hsu &copy; 2018</p>
+	</footer>
+</body>
+</html>
