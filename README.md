@@ -3,12 +3,18 @@
 Gobang small game
 <br>
 Build in native HTML, CSS, Javascript
+&nbsp;
+
+[Demo][]
 
 &nbsp;
 
 五子棋小遊戲
 <br>
 以原生HTML, CSS, Javascript建立
+&nbsp;
+
+[展示][]
 
 &nbsp;
 
@@ -41,3 +47,7 @@ Build in native HTML, CSS, Javascript
 >Bundle
 
 1. Webpack2
+
+
+[Demo]: https://sky172839465.github.io/gobang/
+[展示]: https://sky172839465.github.io/gobang/
