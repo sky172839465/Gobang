@@ -38,6 +38,7 @@ const setCommonFunction = () => {
  */
 const start = (event) => {
     event.target.innerText = 'Restart';
+    document.querySelector('.back-button').classList.remove('header__btn--hide');
     setCommonFunction();
     init();
     cleanChessBoard();
@@ -149,8 +150,8 @@ const getPlayer = () => {
  * 切換下棋角色
  * 
  */
-const changeAttackPlayer = (side) => {
-    if (side === 'whiteSide') {
+const changeAttackPlayer = () => {
+    if (gobang.attackSide === 'whiteSide') {
         return 'blackSide';
     } else {
         return 'whiteSide';
@@ -196,9 +197,10 @@ const chess = (event) => {
                 removeOverlay();
                 setVictoryChesses(gobang.checkmateChessList);
                 setVictoryMessage(gobang.attackSide);
+                document.querySelector('.back-button').classList.add('header__btn--hide');
             }
         }
-        gobang.attackSide = changeAttackPlayer(gobang.attackSide);
+        gobang.attackSide = changeAttackPlayer();
     }
 }
 
@@ -307,4 +309,33 @@ const setVictoryMessage = (side) => {
     gameoverElement.classList.remove('gameover--hide');
 }
 
-export { start };
+/**
+ * 悔一手
+ */
+const back = () => {
+    let overlay, prevPlayer, nowPlayer, lastChessElement;
+
+    overlay = getOverlay('last');
+    // 刪除最後一手棋
+    lastChessElement = gobang.lastChess;
+    while(lastChessElement.childNodes.length > 0){
+        lastChessElement.childNodes[0].parentNode.removeChild(lastChessElement.childNodes[0]);
+    }    
+    lastChessElement.classList.remove('selected');
+
+    // 最後一手棋變成敵方最後下的棋
+    prevPlayer = gobang.player[gobang.attackSide];
+    if (prevPlayer.chesses.length > 0) {
+        gobang.lastChess = prevPlayer.chesses[prevPlayer.chesses.length-1];
+        gobang.lastChess.appendChild(overlay);
+        gobang.lastChess.classList.add('selected');        
+    }
+
+    // 攻擊方變回回一手的那方
+    gobang.attackSide = changeAttackPlayer();
+    nowPlayer = gobang.player[gobang.attackSide];
+    // 悔一手所以刪除最後一手棋
+    nowPlayer.chesses.pop();    
+}
+
+export { start, back };

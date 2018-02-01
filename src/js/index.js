@@ -8,3 +8,7 @@ import '../img/Octocat.png';
 window.start = (event) => {
     app.start(event);
 }
+
+window.back = () => {
+    app.back();
+}

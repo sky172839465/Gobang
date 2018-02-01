@@ -33,6 +33,11 @@
         background-color: $color-secondary;
         border-radius: 0.5rem;
         z-index: 999;
+        margin-left: 0.5rem;
+
+        &--hide {
+            display: none;
+        }
     }
 
     &__btn:hover {
