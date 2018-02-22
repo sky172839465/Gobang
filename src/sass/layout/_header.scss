@@ -13,6 +13,10 @@
     &__title {
         flex: auto;
         font-size: 1.5rem;
+
+        span {
+            margin-left: 8rem;
+        }
     }
 
     a {
@@ -23,6 +27,14 @@
         vertical-align: middle;
         height: 5.5rem;
         width: auto;
+    }
+
+    .view-on-github {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 110px;
+        z-index: 1;        
     }
 
     &__btn {

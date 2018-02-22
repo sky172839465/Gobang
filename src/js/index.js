@@ -3,7 +3,7 @@ import '../sass/main.scss';
 
 import '../img/favicon.png';
 import '../img/gobang.png';
-import '../img/Octocat.png';
+import '../img/view-on-github.black.png';
 
 window.start = (event) => {
     app.start(event);
